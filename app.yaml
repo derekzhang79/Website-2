@@ -1,0 +1,25 @@
+application: second-bit
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /images
+  static_dir: template/images
+- url: /js
+  static_dir: template/js
+- url: /style
+  static_dir: template/style
+- url: /404
+  static_files: template/404.html
+  upload: template/404.html
+- url: /admin
+  script: admin/dashboard.py
+- url: /admin/(add|edit).*
+  script: admin/edit.py
+- url: /portfolio
+  script: portfolio.py
+- url: /
+  script: main.py
+- url: .*
+  script: page.py
