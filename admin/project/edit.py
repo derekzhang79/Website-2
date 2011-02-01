@@ -59,10 +59,10 @@ class EditProjectHandler(webapp.RequestHandler):
     if self.request.get('short_description'):
       project_data.short_description = self.request.get('short_description')
     if self.request.POST('screenshot'):
-      project_data.screenshot = self.request.POST('screenshot').data
+      project_data.screenshot = self.request.POST('screenshot').value
       project_data.screenshot_mimetype = self.request.POST('screenshot').type
     if self.request.POST('icon'):
-      project_data.icon = self.request.POST('icon').data
+      project_data.icon = self.request.POST('icon').value
       project_data.icon_mimetype = self.request.POST('icon').type
     if self.request.get('url'):
       project_data.url = self.request.get('url')

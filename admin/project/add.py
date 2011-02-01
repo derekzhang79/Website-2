@@ -43,9 +43,9 @@ class AddProjectHandler(webapp.RequestHandler):
     project_data.name = self.request.get('name')
     project_data.description = self.request.get('description')
     project_data.short_description = self.request.get('short_description')
-    project_data.screenshot = self.request.POST('screenshot').data
+    project_data.screenshot = self.request.POST('screenshot').value
     project_data.screenshot_mimetype = self.request.POST('screenshot').type
-    project_data.icon = self.request.POST('icon').data
+    project_data.icon = self.request.POST('icon').value
     project_data.icon_mimetype = self.request.POST('icon').type
     project_data.url = self.request.get('url')
     project_data.put()

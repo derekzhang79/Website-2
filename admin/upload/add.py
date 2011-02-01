@@ -26,7 +26,7 @@ class UploadFileHandler(webapp.RequestHandler):
   
   def post(self):
     upload_data = UploadData()
-    upload_data.upload = self.request.POST('upload').data
+    upload_data.upload = self.request.POST('upload').value
     upload_data.mimetype = self.request.POST('upload').type
     upload_data.shortname = self.request.get('shortname')
     upload_data.put()
