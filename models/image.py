@@ -63,3 +63,18 @@ class Image():
             self.height = height
         if width is not None:
             self.width = width
+
+    def save(self):
+        """Writes the current instance of Image to the datastore as an ImageData
+        object. If Image.datastore is set, the referenced ImageData will be
+        updated, instead of creating a clone."""
+
+        if self.datastore is None:
+            self.datastore = ImageData()
+        self.datastore.image = self.image
+        self.datastore.original = self.original
+        self.datastore.mimetype = self.mimetype
+        self.datastore.shortname = self.shortname
+        self.datastore.height = self.height
+        self.datastore.width = self.width
+        self.datastore.put()
