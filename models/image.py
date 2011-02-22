@@ -6,6 +6,10 @@
 #
 #Defines the datastore interface for uploaded images.
 
+import os, sys
+sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
+
+import datastore
 from google.appengine.api import images, users
 import datetime
 
