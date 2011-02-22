@@ -89,8 +89,9 @@ class Image():
         self.datastore.original = self.original
         self.datastore.mimetype = self.mimetype
         self.datastore.shortname = self.shortname
-        self.datastore.height = self.height
-        self.datastore.width = self.width
+        tmp_image = images.Image(image_data=self.image)
+        self.datastore.height = tmp_image.height
+        self.datastore.width = tmp_image.width
         self.datastore.put()
 
     def get(self):
@@ -116,7 +117,7 @@ class Image():
                 self.height = datastore.height
                 self.width = datastore.width
 
-    def resize(self, height, width):
+    def resize(self, height=0, width=0):
         """Resizes the current instance of Image to height and width. Saves
         result as a new ImageData instance, and populates self with it. Throws
         an ImageNotInstantiatedException if self.image or self.datastore is
@@ -126,7 +127,8 @@ class Image():
             raise ImageNotInstantiatedException
         else:
             self.original = self.datastore
-            self.image = images.resize(self.image, height, width)
+            self.datastore = ImageData(mimetype=self.mimetype)
+            self.image = images.resize(self.image, height=height, width=width)
             self.uploaded_by = users.get_current_user()
             self.uploaded_on = datetime.datetime.today()
             self.height = height
