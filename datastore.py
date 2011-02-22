@@ -9,7 +9,7 @@
 from google.appengine.ext import db
 
 class ImageData(db.Model):
-    image = db.Blob()
+    image = db.BlobProperty()
     original = db.SelfReferenceProperty(collection_name='sizes', required=False)
     mimetype = db.StringProperty(required=True, multiline=False)
     shortname = db.StringProperty(multiline=False)
@@ -17,16 +17,6 @@ class ImageData(db.Model):
     uploaded_on = db.DateTimeProperty(auto_now=True)
     height = db.IntegerProperty()
     width = db.IntegerProperty()
-
-class LinkData(db.Model):
-    name = db.StringProperty(multiline=False)
-    title = db.StringProperty(multiline=False, required=False)
-    url = db.StringProperty(multiline=False, required=False)
-    weight = db.IntegerProperty()
-    modified_by = db.UserProperty(auto_current_user=True)
-    modified_on = db.DateTimeProperty(auto_now=True)
-    in_menu = db.BooleanProperty()
-    project = db.ReferenceProperty(ProjectData, collection_name='links')
 
 class PageData(db.Model):
     title = db.StringProperty(multiline=False)
@@ -48,9 +38,19 @@ class ProjectData(db.Model):
     url = db.StringProperty(multiline=False)
     featured = db.BooleanProperty()
     open_source = db.BooleanProperty()
-    featured_link = db.ReferenceProperty(LinkData)
+    featured_link = db.ReferenceProperty()
     modified_by = db.UserProperty(auto_current_user=True)
     modified_on = db.DateTimeProperty(auto_now=True)
+
+class LinkData(db.Model):
+    name = db.StringProperty(multiline=False)
+    title = db.StringProperty(multiline=False, required=False)
+    url = db.StringProperty(multiline=False, required=False)
+    weight = db.IntegerProperty()
+    modified_by = db.UserProperty(auto_current_user=True)
+    modified_on = db.DateTimeProperty(auto_now=True)
+    in_menu = db.BooleanProperty()
+    project = db.ReferenceProperty(ProjectData, collection_name='links')
 
 class ServiceData(db.Model):
     url = db.StringProperty(multiline=False)
