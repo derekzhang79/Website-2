@@ -78,3 +78,25 @@ class Image():
         self.datastore.height = self.height
         self.datastore.width = self.width
         self.datastore.put()
+
+    def get(self):
+        """Populates the current instance of Image with the data from
+        ImageData.get(self.shortname). Throws an ImageNotFoundException if it
+        can't find self.shortname in the datastore."""
+
+        if self.shortname is None:
+            raise ImageNotFoundException, self.shortname
+        else:
+            datastore = ImageData.all().filter("shortname =", self.shortname).get()
+            if datastore is None:
+                raise ImageNotFoundException, self.shortname
+            else:
+                self.datastore = datastore
+                self.image = datastore.image
+                self.original = datastore.original
+                self.mimetype = datastore.mimetype
+                self.shortname = datastore.shortname
+                self.uploaded_by = datastore.uploaded_by
+                self.uploaded_on = datastore.uploaded_on
+                self.height = datastore.height
+                self.width = datastore.width
