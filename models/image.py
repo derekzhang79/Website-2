@@ -6,6 +6,9 @@
 #
 #Defines the datastore interface for uploaded images.
 
+from google.appengine.api import images, users
+import datetime
+
 class Image():
     """Defines datastore interactions for uploaded images."""
 
@@ -88,10 +91,11 @@ class Image():
     def get(self):
         """Populates the current instance of Image with the data from
         ImageData.get(self.shortname). Throws an ImageNotFoundException if it
-        can't find self.shortname in the datastore."""
+        can't find self.shortname in the datastore. Throws an
+        ImageNotInstantiatedException if self.shortname is None."""
 
         if self.shortname is None:
-            raise ImageNotFoundException, self.shortname
+            raise ImageNotInstantiatedException
         else:
             datastore = ImageData.all().filter("shortname =", self.shortname).get()
             if datastore is None:
@@ -106,3 +110,21 @@ class Image():
                 self.uploaded_on = datastore.uploaded_on
                 self.height = datastore.height
                 self.width = datastore.width
+
+    def resize(self, height, width):
+        """Resizes the current instance of Image to height and width. Saves
+        result as a new ImageData instance, and populates self with it. Throws
+        an ImageNotInstantiatedException if self.image or self.datastore is
+        None."""
+
+        if self.datastore is None or self.image is None:
+            raise ImageNotInstantiatedException
+        else:
+            self.original = self.datastore
+            self.image = images.resize(self.image, height, width)
+            self.uploaded_by = users.get_current_user()
+            self.uploaded_on = datetime.datetime.today()
+            self.height = height
+            self.width = width
+            self.shortname = "%s_%sx%s" % (self.shortname, self.height, self.width)
+            self.save()
