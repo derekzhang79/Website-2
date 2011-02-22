@@ -6,3 +6,60 @@
 #
 #Defines the datastore interface for uploaded images.
 
+class Image():
+    """Defines datastore interactions for uploaded images."""
+
+    #attributes
+    image = None
+    original = None
+    mimetype = None
+    shortname = None
+    uploaded_by = None
+    uploaded_on = None
+    height = None
+    width = None
+    datastore = None
+
+    def __init__(self, image=None, shortname=None, mimetype=None, original=None, datastore=None, height=None, width=None):
+        """Defines the initialization method for an Image object. Accepts the
+        image (the raw bytes of the image data), the shortname (used in the 
+        URL), the mimetype, the original image (a reference to an ImageData 
+        instance, if this is a resizing of an image), a datastore (a reference
+        to an ImageData instance), a height, and a width, all optional."""
+
+        #reset all local variables
+        self.image = None
+        self.original = None
+        self.mimetype = None
+        self.shortname = None
+        self.uploaded_by = None
+        self.uploaded_on = None
+        self.height = None
+        self.width = None
+        self.datastore = None
+
+        if datastore is not None:
+            self.datastore = datastore
+            self.image = datastore.image
+            self.original = datastore.original
+            self.mimetype = datastore.mimetype
+            self.shortname = datastore.shortname
+            self.uploaded_by = datastore.uploaded_by
+            self.uploaded_on = datastore.uploaded_on
+            self.height = datastore.height
+            self.width = datastore.width
+        if original is not None:
+            self.original = original
+            self.image = original.image
+            self.mimetype = original.mimetype
+            self.shortname = original.shortname
+        if shortname is not None:
+            self.shortname = shortname
+        if image is not None:
+            self.image = image
+        if mimetype is not None:
+            self.mimetype = mimetype
+        if height is not None:
+            self.height = height
+        if width is not None:
+            self.width = width
