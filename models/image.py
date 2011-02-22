@@ -9,7 +9,7 @@
 import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 
-import datastore
+from datastore import ImageData
 from google.appengine.api import images, users
 import datetime
 
