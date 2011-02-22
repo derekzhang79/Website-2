@@ -31,8 +31,15 @@ class AddEditImageHandler(webapp.RequestHandler):
                 <input type="submit">
             </form>""" % (img, shortname)
 
-    def post(self):
-        pass
+    def post(self, shortname=None):
+        image = Image()
+        if shortname is not None:
+            image.shortname = shortname
+            image.get()
+        image.image = self.request.POST("image").value
+        image.mimetype = self.request.POST("image").type
+        image.shortname = self.request.POST("shortname")
+        image.save()
 
 application = webapp.WSGIApplication([
                                 ('/admin/images/add', AddEditImageHandler),
