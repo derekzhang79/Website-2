@@ -6,10 +6,12 @@
 #
 #Handles requests to add or edit an image.
 
-from models.image import Image
-from models.site import Site
-from google.appengine.ext import webapp
+import sys, os, logging
+sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 
+from models.image import Image
+from google.appengine.ext import webapp
+from google.appengine.ext.webapp.util import run_wsgi_app
 
 class AddEditImageHandler(webapp.RequestHandler):
     def get(self, image=None):
@@ -36,9 +38,9 @@ class AddEditImageHandler(webapp.RequestHandler):
         if shortname is not None:
             image.shortname = shortname
             image.get()
-        image.image = self.request.POST("image").value
-        image.mimetype = self.request.POST("image").type
-        image.shortname = self.request.POST("shortname")
+        image.image = self.request.POST["image"].value
+        image.mimetype = self.request.POST["image"].type
+        image.shortname = self.request.POST["shortname"]
         image.save()
 
 application = webapp.WSGIApplication([
@@ -48,7 +50,7 @@ application = webapp.WSGIApplication([
                                 ], debug=True)
 
 def main():
-    webapp.util.run_wsgi_app(application)
+    run_wsgi_app(application)
 
 if __name__ == "__main__":
     main()
