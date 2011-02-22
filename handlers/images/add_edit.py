@@ -12,15 +12,31 @@ from google.appengine.ext import webapp
 
 
 class AddEditImageHandler(webapp.RequestHandler):
-    def get(self):
-        pass
+    def get(self, image=None):
+        if image is None:
+            img = ""
+            shortname = ""
+        else:
+            image_data = Image(shortname=image)
+            image_data.get()
+            img = '<img src="/images/%s" />' % image_data.shortname
+            shortname = image_data.shortname
+        self.response.out.write("""
+            <form enctype="multipart/form-data" method="post">
+                %s
+                <label>Image</label>
+                <input type="file" name="image" /><br />
+                <label>Short Name</label>
+                <input type="text" name="shortname" value="%s" /><br />
+                <input type="submit">
+            </form>""" % (img, shortname)
 
     def post(self):
         pass
 
 application = webapp.WSGIApplication([
                                 ('/admin/images/add', AddEditImageHandler),
-                                ('/admin/images/edit/*', AddEditImageHandler),
+                                ('/admin/images/edit/(.*)', AddEditImageHandler),
                                 ('/admin/images/add/', AddEditImageHandler)
                                 ], debug=True)
 
