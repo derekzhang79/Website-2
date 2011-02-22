@@ -11,6 +11,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 
 from datastore import ImageData
 from google.appengine.api import images, users
+from google.appengine.ext import db
 import datetime
 
 class Image():
@@ -79,12 +80,12 @@ class Image():
         and doesn't match self.datastore.shortname."""
 
         if self.datastore is None:
-            self.datastore = ImageData()
+            self.datastore = ImageData(mimetype=self.mimetype)
         if self.shortname is not None and self.shortname != self.datastore.shortname:
             duplicate = ImageData.all().filter("shortname =", self.shortname).get()
             if duplicate is not None:
                 raise ImageShortNameInUseException, self.shortname
-        self.datastore.image = self.image
+        self.datastore.image = db.Blob(self.image)
         self.datastore.original = self.original
         self.datastore.mimetype = self.mimetype
         self.datastore.shortname = self.shortname
