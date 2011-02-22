@@ -21,7 +21,7 @@ class AddEditImageHandler(webapp.RequestHandler):
         else:
             image_data = Image(shortname=image)
             image_data.get()
-            img = '<img src="/images/%s" />' % image_data.shortname
+            img = '<img src="/image/%s" /><br />' % image_data.shortname
             shortname = image_data.shortname
         self.response.out.write("""
             <form enctype="multipart/form-data" method="post">
