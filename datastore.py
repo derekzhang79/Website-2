@@ -47,6 +47,7 @@ class ProjectData(db.Model):
     images = db.ListProperty(db.Key)
     url = db.StringProperty(multiline=False)
     featured = db.BooleanProperty()
+    open_source = db.BooleanProperty()
     featured_link = db.ReferenceProperty(LinkData)
     modified_by = db.UserProperty(auto_current_user=True)
     modified_on = db.DateTimeProperty(auto_now=True)
