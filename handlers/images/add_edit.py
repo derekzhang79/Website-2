@@ -29,7 +29,7 @@ class AddEditImageHandler(webapp.RequestHandler):
                 <label>Short Name</label>
                 <input type="text" name="shortname" value="%s" /><br />
                 <input type="submit">
-            </form>""" % (img, shortname)
+            </form>""" % (img, shortname))
 
     def post(self, shortname=None):
         image = Image()
