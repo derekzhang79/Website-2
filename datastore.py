@@ -1,7 +1,12 @@
-#!/usr/bin/env python
+#datastore.py
+#
+#Authors:
+#   Paddy Foran <paddy@secondbit.org>
+#Last Modified: 2/22/11
+#
+#Defines the datastore tables and their respective fields.
 
 from google.appengine.ext import db
-
 
 class ImageData(db.Model):
     image = db.Blob()
