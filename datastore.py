@@ -10,7 +10,7 @@ from google.appengine.ext import db
 
 class ImageData(db.Model):
     image = db.Blob()
-    original = db.ReferenceProperty(ImageData, collection_name='sizes', required=False)
+    original = db.SelfReferenceProperty(collection_name='sizes', required=False)
     mimetype = db.StringProperty(required=True, multiline=False)
     shortname = db.StringProperty(multiline=False)
     uploaded_by = db.UserProperty(auto_current_user=True)
