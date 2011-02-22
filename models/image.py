@@ -67,10 +67,16 @@ class Image():
     def save(self):
         """Writes the current instance of Image to the datastore as an ImageData
         object. If Image.datastore is set, the referenced ImageData will be
-        updated, instead of creating a clone."""
+        updated, instead of creating a clone. Throws an
+        ImageShortNameInUseException if self.shortname exists in the datastore
+        and doesn't match self.datastore.shortname."""
 
         if self.datastore is None:
             self.datastore = ImageData()
+        if self.shortname is not None and self.shortname != self.datastore.shortname:
+            duplicate = ImageData.all().filter("shortname =", self.shortname).get()
+            if duplicate is not None:
+                raise ImageShortNameInUseException, self.shortname
         self.datastore.image = self.image
         self.datastore.original = self.original
         self.datastore.mimetype = self.mimetype
