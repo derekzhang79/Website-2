@@ -38,7 +38,7 @@ class ListLinksHandler(webapp.RequestHandler):
                 <td>%s</td>
                 <td>%s</td>
                 <td><a href="/admin/links/edit/%s" title="Edit %s">Edit</a> | <a href="/admin/links/reorder/%s" title="Reorder %s">Reorder</a> | <a href="/admin/links/delete/%s" title="Delete %s">Delete</a></td>
-            </tr>""" % (link.name, link.title, link.url, link.url, link.weight, link.group, link.modified_by.email(), link.modified_on, link.key(), link.name, link.group, link.group, link.key, link.name)
+            </tr>""" % (link.name, link.title, link.url, link.url, link.weight, link.group, link.modified_by.email(), link.modified_on, link.key(), link.name, link.group, link.group, link.key(), link.name)
         self.response.out.write(content)
 
 application = webapp.WSGIApplication([
