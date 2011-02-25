@@ -29,16 +29,20 @@ class ListImagesHandler(webapp.RequestHandler):
             <th>Actions</th>
         </tr>"""
         for image in images:
+            original = 'N/A'
+            if image.original is not None:
+                original = "<a href=\"/images/%s\">%s</a>" % (image.original.shortname, image.original.shortname)
             content += """<tr>
+                <td><a href="/image/%s" title="View %s">%s</a></td>
                 <td>%s</td>
                 <td>%s</td>
                 <td>%s</td>
-                <td><a href="/image/%s">%s</a></td>
                 <td>%s</td>
                 <td>%s</td>
                 <td>%s</td>
-                <td><a href="/admin/images/edit/%s" title="Edit %s">Edit</a> | <a href="/admin/images/delete/%s" title="Delete %s">Delete</a></td>
-            </tr>""" % (image.shortname, image.width, image.height, image.original.shortname, image.original.shortname, image.mimetype, image.uploaded_by.email(), image.uploaded_on, image.shortname, image.shortname, image.shortname, image.shortname)
+                <td><a href="/admin/images/edit/%s" title="Edit %s">Edit</a> |
+                <a href="/admin/images/resize/%s" title="Resize %s">Resize</a> | <a href="/admin/images/delete/%s" title="Delete %s">Delete</a></td>
+            </tr>""" % (image.shortname, image.shortname, image.shortname, image.width, image.height, original, image.mimetype, image.uploaded_by.email(), image.uploaded_on, image.shortname, image.shortname, image.shortname, image.shortname, image.shortname, image.shortname)
         self.response.out.write(content)
 
 application = webapp.WSGIApplication([

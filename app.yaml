@@ -4,6 +4,17 @@ runtime: python
 api_version: 1
 
 handlers:
+- url: /admin/images/(add|edit).*
+  script: handlers/images/add_edit.py
+  login: admin
+- url: /admin/images/resize/(.*)
+  script: handlers/images/resize.py
+- url: /image/(.*)
+  script: handlers/images/view.py
+- url: /admin/images
+  script: handlers/images/list.py
+- url: /admin/images/
+  script: handlers/images/list.py
 - url: /images
   static_dir: template/images
 - url: /js
