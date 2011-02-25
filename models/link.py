@@ -119,3 +119,13 @@ class Link():
             self.modified_by = None
             self.modified_on = None
             self.group = None
+
+    def get_group(self):
+        """Returns a Query object of LinkData instances for all the links that
+        match self.group, ordered by weight ascending. Throws a
+        LinkNotInstantiatedException is self.group is None."""
+
+        if self.group is None:
+            raise LinkNotInstantiatedException
+        else:
+            return LinkData.all().filter("group =", self.group).order("weight").fetch(1000)
