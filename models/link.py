@@ -92,7 +92,7 @@ class Link():
         else:
             datastore = LinkData.get(self.key)
             if datastore is None:
-                raise LinkNotFoundException
+                raise LinkNotFoundException, self.key
             else:
                 self.datastore = datastore
                 self.name = datastore.name
@@ -102,3 +102,20 @@ class Link():
                 self.modified_by = datastore.modified_by
                 self.modified_on = datastore.modified_on
                 self.group = datastore.group
+
+    def delete(self):
+        """Removes the current instance of Link from the datastore. Throws a
+        LinkNotInstantiatedException if self.datastore is None."""
+
+        if self.datastore is None:
+            raise LinkNotInstantiatedException
+        else:
+            self.datastore.delete()
+            self.datastore = None
+            self.name = None
+            self.title = None
+            self.url = None
+            self.weight = None
+            self.modified_by = None
+            self.modified_on = None
+            self.group = None
