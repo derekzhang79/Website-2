@@ -131,3 +131,8 @@ class Link():
             raise LinkNotInstantiatedException
         else:
             return LinkData.all().filter("group =", self.group).order("weight").fetch(1000)
+
+    def get_list(self):
+        """Returns a Query object for up to 1,000 LinkData objects."""
+
+        return LinkData.all().fetch(1000)
