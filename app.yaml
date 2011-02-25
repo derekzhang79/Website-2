@@ -9,12 +9,18 @@ handlers:
   login: admin
 - url: /admin/images/resize/(.*)
   script: handlers/images/resize.py
+  login: admin
 - url: /image/(.*)
   script: handlers/images/view.py
 - url: /admin/images
   script: handlers/images/list.py
+  login: admin
 - url: /admin/images/
   script: handlers/images/list.py
+  login: admin
+- url: /admin/links/(add|edit).*
+  script: handlers/links/add_edit.py
+  login: admin
 - url: /images
   static_dir: template/images
 - url: /js
