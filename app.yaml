@@ -21,6 +21,9 @@ handlers:
 - url: /admin/links/(add|edit).*
   script: handlers/links/add_edit.py
   login: admin
+- url: /admin/links/delete/(.*)
+  script: handlers/links/delete.py
+  login: admin
 - url: /admin/links
   script: handlers/links/list.py
   login: admin
