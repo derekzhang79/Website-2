@@ -2,7 +2,7 @@
 #
 #Authors:
 #   Paddy Foran <paddy@secondbit.org>
-#Last Modified: 2/22/11
+#Last Modified: 2/25/11
 #
 #Defines the datastore tables and their respective fields.
 
@@ -49,8 +49,7 @@ class LinkData(db.Model):
     weight = db.IntegerProperty()
     modified_by = db.UserProperty(auto_current_user=True)
     modified_on = db.DateTimeProperty(auto_now=True)
-    in_menu = db.BooleanProperty()
-    project = db.ReferenceProperty(ProjectData, collection_name='links')
+    group = db.StringProperty(multiline=False)
 
 class ServiceData(db.Model):
     url = db.StringProperty(multiline=False)
