@@ -25,12 +25,13 @@ class DeleteLinkHandler(webapp.RequestHandler):
                 Are you sure you want to delete <a href="%s" title="%s">%s</a>?
                 </p>
                 <input type="submit" value="Yes" />
-            </form>""", (link.url, link.title, link.name))
+            </form>""" % (link.url, link.title, link.name))
 
     def post(self, key=None):
         link = Link()
         if key is not None:
             link.key = key
+            link.get()
             link.delete()
             self.response.out.write("<p>Successfully deleted link.</p>")
         else:
