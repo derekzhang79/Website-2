@@ -4,7 +4,7 @@
 #   Paddy Foran <paddy@secondbit.org>
 #Last Modified: 2/25/11
 #
-#Handles requests to add or edit an image.
+#Handles requests to add or edit a link.
 
 import sys, os, logging
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
