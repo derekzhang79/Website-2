@@ -25,7 +25,7 @@ class Link():
     group = None
     datastore = None
 
-    def __init__(self, name=None, datastore=None title=None, url=None, weight=None, group=None key=None):
+    def __init__(self, name=None, datastore=None, title=None, url=None, weight=None, group=None, key=None):
         """Defines the initialization method for a Link object. Accepts the
         datastore (an instance of a LinkData object) the name (the text that is
         linked), the title (the title element of the link), the url, the weight
@@ -53,6 +53,8 @@ class Link():
             self.modified_on = datastore.modified_on
             self.group = datastore.group
             self.key = datastore.key()
+        else:
+            self.datastore = LinkData()
         if name is not None:
             self.name = name
         if title is not None:
@@ -77,7 +79,7 @@ class Link():
             self.datastore.name = self.name
             self.datastore.title = self.title
             self.datastore.url = self.url
-            self.datastore.weight = self.weight
+            self.datastore.weight = int(self.weight)
             self.datastore.group = self.group
             self.datastore.put()
 
