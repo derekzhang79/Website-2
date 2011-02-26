@@ -2,7 +2,7 @@
 #
 #Authors:
 #   Paddy Foran <paddy@secondbit.org>
-#Last Modified: 2/25/11
+#Last Modified: 2/26/11
 #
 #Defines exceptions that are raised by Page
 
@@ -20,7 +20,7 @@ class PageURLTakenException(Exception):
         self.url = url
 
     def __str__(self):
-        repr("The URL \"%s\" has already been used in the datastore." % url)
+        repr("The URL \"%s\" has already been used in the datastore." % self.url)
 
 class PageURLReservedException(Exception):
     """Thrown when a Page object is saved with a URL that matches a reserved
@@ -30,7 +30,7 @@ class PageURLReservedException(Exception):
         self.url = url
 
     def __str__(self):
-        repr("\"%s\" is a reserved URL by the system, and can't be used." % url)
+        repr("\"%s\" is a reserved URL by the system, and can't be used." % self.url)
 
 class PageNotFoundException(Exception):
     """Thrown when the datastore is searched for a URL that is not found in the
@@ -40,4 +40,4 @@ class PageNotFoundException(Exception):
         self.url = url
 
     def __str__(self):
-        repr("There is no page that matches \"%s\" in the database." % url)
+        repr("There is no page that matches \"%s\" in the database." % self.url)
