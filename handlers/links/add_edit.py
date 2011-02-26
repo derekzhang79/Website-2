@@ -11,6 +11,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 
 from models.link import Link
 from google.appengine.ext import webapp
+from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
 
 class AddEditLinkHandler(webapp.RequestHandler):
@@ -22,10 +23,14 @@ class AddEditLinkHandler(webapp.RequestHandler):
             link.url = ""
             link.weight = ""
             link.group = ""
+            action = "Add"
+            name = ''
         else:
             link = Link(key=key)
             link.get()
-        self.response.out.write("""
+            action = "Edit"
+            name = " '%s'" % link.name
+        content = """
             <form method="post">
                 <label>Name</label>
                 <input type="text" name="name" value="%s" /><br />
@@ -38,8 +43,28 @@ class AddEditLinkHandler(webapp.RequestHandler):
                 <label>Group</label>
                 <input type="text" name="group" value="%s" /><br />
                 <input type="submit">
-            </form>""" % (link.name, link.title, link.url, link.weight, link.group))
-
+            </form>""" % (link.name, link.title, link.url, link.weight, link.group)
+        sidebar = """<h2>Hint!</h2>
+            <p>
+                <b>Name:</b> The text that is linked, like <a href="#">this</a>.<br />
+                <b>Title:</b> The text that appears when the link is hovered
+                    over. Like <a href="#" title="This is a title.">this</a><br
+                    />
+                <b>URL:</b> The URL you're linking to.
+                <b>Weight:</b> The 'weight' of the link, which determines how
+                    the links in the group are ordered. The heavier the link,
+                    the lower it is ordered.
+                <b>Group:</b> The 'group' the link is part of. Could be
+                    'special_menu' or 'project_android2cloud'.
+            </p>"""
+        template_values = {
+            'content' : '<h2>%s Link%s</h2><div>%s</div>' % (action, name, content),
+            'title' : '%s Link%s' % (action, name),
+            'sidebar': sidebar
+        }
+        path = os.path.join(os.path.dirname(__file__), "../../template/hauk", 'secondary.html')
+        self.response.out.write(template.render(path, template_values))
+            
     def post(self, key=None):
         link = Link()
         if key is not None:
@@ -51,6 +76,7 @@ class AddEditLinkHandler(webapp.RequestHandler):
         link.weight = self.request.POST['weight']
         link.group = self.request.POST['group']
         link.save()
+        self.redirect("/admin/links")
 
 application = webapp.WSGIApplication([
                                 ('/admin/links/add', AddEditLinkHandler),
