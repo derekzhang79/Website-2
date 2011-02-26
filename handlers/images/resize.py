@@ -30,7 +30,7 @@ class ResizeImageHandler(webapp.RequestHandler):
                     <input type="submit" />
                 </form>
             </p>""" % (image.shortname, image.shortname, image.width, image.height)
-        sidebar = "<h2>Hints!</h2>
+        sidebar = """<h2>Hints!</h2>
         <p><b>Width</b>: The <i>maximum</i> width you'd like the resized image
         to be.<br />
         <b>Height</b>: The <i>maximum</i> height you'd like the resized image to
