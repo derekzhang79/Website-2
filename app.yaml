@@ -33,8 +33,13 @@ handlers:
 - url: /admin/pages/(add|edit).*
   script: handlers/pages/add_edit.py
   login: admin
+- url: /admin/pages/delete/.*
+  script: handlers/pages/delete.py
+  login: admin
 - url: /images
   static_dir: template/hauk/images
+- url: /favicon.ico
+  static_files: template/hauk/images/favicon.ico
 - url: /js
   static_dir: template/hauk/js
 - url: /style
