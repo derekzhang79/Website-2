@@ -39,7 +39,7 @@ class ListPagesHandler(webapp.RequestHandler):
                 <td>%s</td>
                 <td>%s</td>
                 <td>%s</td>
-                <td><a href="/admin/pages/edit/%s" title="Edit %s">Edit</a> | <a href="/admin/pages/delete/%s" title="Page %s">Page</a></td>
+                <td><a href="/admin/pages/edit/%s" title="Edit %s">Edit</a> | <a href="/admin/pages/delete/%s" title="Page %s">Delete</a></td>
             </tr>""" % (page.title, page.url, page.url, visibility, page.modified_by, modified_on, page.url, page.title, page.url, page.title)
         content += "</table>"
         sidebar = """<h2>Page Administration</h2>
