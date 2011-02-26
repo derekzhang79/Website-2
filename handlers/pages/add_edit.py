@@ -53,7 +53,7 @@ class AddEditPageHandler(webapp.RequestHandler):
                     <textarea name="sidebar">%s</textarea><br />
                     <input type="submit">
                 </form>
-            <p>""" % (action, name, page.title, page.url, public, page.content, page.sidebar))
+            <p>""" % (action, name, page.title, page.url, public, page.content, page.sidebar)
         sidebar = """<h2>Hints!</h2>
         <p>
             <b>Title</b>: The name of the page.<br />
