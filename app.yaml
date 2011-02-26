@@ -39,7 +39,8 @@ handlers:
 - url: /images
   static_dir: template/hauk/images
 - url: /favicon.ico
-  static_files: template/hauk/images/favicon.ico
+  static_files: /favicon.ico
+  upload: template/hauk/images/favicon.ico
 - url: /js
   static_dir: template/hauk/js
 - url: /style
