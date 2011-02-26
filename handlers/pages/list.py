@@ -18,15 +18,16 @@ class ListPagesHandler(webapp.RequestHandler):
     def get(self):
         page = Page()
         pages = page.get_list()
-        content = """<table>
-        <tr>
-            <th>Title</th>
-            <th>URL</th>
-            <th>Visibility</th>
-            <th>Modified By</th>
-            <th>Modified On</th>
-            <th>Actions</th>
-        </tr>"""
+        content = """<h2>Pages</h2>
+        <table>
+            <tr>
+                <th>Title</th>
+                <th>URL</th>
+                <th>Visibility</th>
+                <th>Modified By</th>
+                <th>Modified On</th>
+                <th>Actions</th>
+            </tr>"""
         for page in pages:
             modified_on = page.modified_on.strftime("%m/%d/%y %H:%M")
             visibility = "Private"
