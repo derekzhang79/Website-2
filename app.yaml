@@ -42,6 +42,9 @@ handlers:
 - url: /admin/pages/
   script: handlers/pages/list.py
   login: admin
+- url: /admin/projects/(add|edit).*
+  script: handlers/projects/add_edit.py
+  login: admin
 - url: /images
   static_dir: template/hauk/images
 - url: /favicon.ico
