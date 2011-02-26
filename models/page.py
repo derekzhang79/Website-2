@@ -10,6 +10,7 @@ import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 
 from datastore import PageData
+from exceptions.page import *
 
 reserved_urls = ['projects', 'project', 'products', 'product', 'team', 'image', 'images', 'style', 'js', 'portfolio', 'admin', 'reviews', 'review', 'services', 'service', 'file']
 
