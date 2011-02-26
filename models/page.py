@@ -85,7 +85,7 @@ class Page():
                     raise PageURLReservedException, self.url
                 else:
                     try:
-                        duplicate = Page(self.url)
+                        duplicate = Page(url=self.url)
                         duplicate.get()
                     except PageNotFoundException:
                         pass
