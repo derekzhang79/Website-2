@@ -59,7 +59,13 @@ class AddEditImageHandler(webapp.RequestHandler):
         if shortname is not None:
             image.shortname = shortname
             image.get()
-        image.image = self.request.POST["image"].value
+        try:
+            uploaded_image = self.request.POST["image"].value
+        except KeyError:
+            pass
+        else:
+            if uploaded_image is not None:
+                image.image = uploaded_image
         image.mimetype = self.request.POST["image"].type
         image.shortname = self.request.POST["shortname"]
         image.save()
