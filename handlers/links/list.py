@@ -38,6 +38,7 @@ class ListLinksHandler(webapp.RequestHandler):
                 <td>%s</td>
                 <td><a href="/admin/links/edit/%s" title="Edit %s">Edit</a> | <a href="/admin/links/reorder/%s" title="Reorder %s">Reorder</a> | <a href="/admin/links/delete/%s" title="Delete %s">Delete</a></td>
             </tr>""" % (link.title, link.url, link.name, link.weight, link.group, link.modified_by.email(), modified_on, link.key(), link.name, link.group, link.group, link.key(), link.name)
+        content += "</table>"
         sidebar = """<h2>Link Administration</h2>
         <p>You can edit, delete, and reorder the links in the datastore by
         clicking the appropriate link. You can also <a href="/admin/links/add"
