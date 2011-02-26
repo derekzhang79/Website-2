@@ -50,10 +50,10 @@ class AddEditLinkHandler(webapp.RequestHandler):
                 <b>Title:</b> The text that appears when the link is hovered
                     over. Like <a href="#" title="This is a title.">this</a><br
                     />
-                <b>URL:</b> The URL you're linking to.
+                <b>URL:</b> The URL you're linking to.<br />
                 <b>Weight:</b> The 'weight' of the link, which determines how
                     the links in the group are ordered. The heavier the link,
-                    the lower it is ordered.
+                    the lower it is ordered.<br />
                 <b>Group:</b> The 'group' the link is part of. Could be
                     'special_menu' or 'project_android2cloud'.
             </p>"""
