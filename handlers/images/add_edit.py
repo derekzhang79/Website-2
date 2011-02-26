@@ -51,7 +51,7 @@ class AddEditImageHandler(webapp.RequestHandler):
             'content' : content,
             'sidebar' : sidebar
         }
-        path = ps.path.join(os.path.dirname(__file__), "../../template/hauk", "secondary.html")
+        path = os.path.join(os.path.dirname(__file__), "../../template/hauk", "secondary.html")
         self.response.out.write(template.render(path, template_values))
 
     def post(self, shortname=None):
