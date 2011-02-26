@@ -20,12 +20,22 @@ class DeleteLinkHandler(webapp.RequestHandler):
         else:
             link = Link(key=key)
             link.get()
-            self.response.out.write("""<form method="post">
+            content = """<form method="post">
                 <p>
                 Are you sure you want to delete <a href="%s" title="%s">%s</a>?
                 </p>
                 <input type="submit" value="Yes" />
-            </form>""" % (link.url, link.title, link.name))
+            </form>""" % (link.url, link.title, link.name)
+            sidebar = """<h2>Warning</h2>
+            <p>When a link is deleted, it is gone for good. Make sure you want
+            to do this.</p>"""
+            template_values = {
+                'content' = content,
+                'title' = 'Delete Link "%s"',
+                'sidebar' = sidebar
+            } % link.name
+            path = os.path.join(os.path.dirname(__file__), '../../template/hauk', 'secondary.html')
+            self.response.out.write(template.render(path, template_values))
 
     def post(self, key=None):
         link = Link()
@@ -33,9 +43,7 @@ class DeleteLinkHandler(webapp.RequestHandler):
             link.key = key
             link.get()
             link.delete()
-            self.response.out.write("<p>Successfully deleted link.</p>")
-        else:
-            self.redirect("/admin/links")
+        self.redirect("/admin/links")
 
 application = webapp.WSGIApplication([
                                 ('/admin/links/delete/(.*)', DeleteLinkHandler)
