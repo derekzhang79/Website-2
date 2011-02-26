@@ -13,6 +13,7 @@ from models.project import Project
 from models.link import Link
 from models.image import Image
 from errors.project import *
+from errors.image import *
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
@@ -129,25 +130,50 @@ class AddEditProjectHandler(webapp.RequestHandler):
         path = os.path.join(os.path.dirname(__file__), '../../template/hauk', 'secondary.html')
         self.response.out.write(template.render(path, template_values))
 
-    #def post(self, url=None):
+    def post(self, url=None):
         #page = Page()
-        #if url is not None:
-        #    page.url = url
-        #    page.get()
-        #page.title = self.request.POST['title']
-        #page.content = self.request.POST['content']
-        #page.sidebar = self.request.POST['sidebar']
-        #page.url = self.request.POST['url']
-        #try:
-        #    public = self.request.POST['is_public']
-        #except KeyError:
-        #    public = "False"
-        #if public == "True":
-        #    page.is_public = True
-        #else:
-        #    page.is_public = False
-        #page.save()
-       # self.redirect("/%s" % page.url)
+        project = Project()
+        if url is not None:
+            project.url = url
+            project.get()
+        project.nature = self.request.POST['nature']
+        project.name = self.request.POST['name']
+        project.description = self.request.POST['description']
+        project.excerpt = self.request.POST['excerpt']
+        project.url = self.request.POST['url']
+        try:
+            featured = self.request.POST['featured']
+        except KeyError:
+            featured = "False"
+        if featured == "True":
+            project.featured = True
+        else:
+            project.featured = False
+        try:
+            open_source = self.request.POST['open_source']
+        except KeyError:
+            open_source = "False"
+        if open_source == "True":
+            project.open_source = True
+        else:
+            project.open_source = False
+        screenshot = Image(shortname=self.request.POST['screenshot'])
+        try:
+            screenshot.get()
+        except ImageNotFoundError:
+            pass
+        else:
+            project.screenshot = screenshot.datastore
+        icon = Image(shortname=self.request.POST['icon'])
+        try:
+            icon.get()
+        except ImageNotFoundError:
+            pass
+        else:
+            project.icon = icon.datastore
+        project.images = []
+        project.save()
+        self.redirect("/projects/%s" % project.url)
 
 application = webapp.WSGIApplication([
                                 ('/admin/projects/add', AddEditProjectHandler),

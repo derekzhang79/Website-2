@@ -20,7 +20,7 @@ class ProjectURLTakenException(Exception):
         self.url = url
 
     def __str__(self):
-        repr("The URL \"%s\" has already been used in the datastore." % url)
+        repr("The URL \"%s\" has already been used in the datastore." % self.url)
 
 class ProjectNotFoundException(Exception):
     """Thrown when the datastore is searched for a project URL that is not found in the
@@ -30,4 +30,4 @@ class ProjectNotFoundException(Exception):
         self.url = url
 
     def __str__(self):
-        repr("There is no project that matches \"%s\" in the database." % url)
+        repr("There is no project that matches \"%s\" in the database." % self.url)
