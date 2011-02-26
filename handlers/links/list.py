@@ -18,7 +18,8 @@ class ListLinksHandler(webapp.RequestHandler):
     def get(self):
         link = Link()
         links = link.get_list()
-        content = """<table>
+        content = """<h2>Links</h2>
+        <table>
         <tr>
             <th>Link</th>
             <th>Weight</th>
@@ -29,8 +30,7 @@ class ListLinksHandler(webapp.RequestHandler):
         </tr>"""
         for link in links:
             modified_on = link.modified_on.strftime("%m/%d/%y %H:%M")
-            content += """<h2>Links</h2>
-            <tr>
+            content += """<tr>
                 <td><a title="%s" href="%s">%s</a></td>
                 <td>%s</td>
                 <td>%s</td>
