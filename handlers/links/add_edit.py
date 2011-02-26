@@ -48,7 +48,7 @@ class AddEditLinkHandler(webapp.RequestHandler):
             <p>
                 <b>Name:</b> The text that is linked, like <a href="#">this</a>.<br />
                 <b>Title:</b> The text that appears when the link is hovered
-                    over. Like <a href="#" title="This is a title.">this</a><br
+                    over. Like <a href="#" title="This is a title.">this</a>.<br
                     />
                 <b>URL:</b> The URL you're linking to.<br />
                 <b>Weight:</b> The 'weight' of the link, which determines how
