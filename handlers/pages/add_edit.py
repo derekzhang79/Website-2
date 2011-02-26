@@ -1,61 +1,69 @@
-#/handlers/link/add_edit.py
+#/handlers/pages/add_edit.py
 #
 #Authors:
 #   Paddy Foran <paddy@secondbit.org>
 #Last Modified: 2/25/11
 #
-#Handles requests to add or edit a link.
+#Handles requests to add or edit a page.
 
 import sys, os, logging
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 
-from models.link import Link
+from models.page import Page
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 
-class AddEditLinkHandler(webapp.RequestHandler):
-    def get(self, key=None):
-        if key is None:
-            link = Link()
-            link.name = ""
-            link.title = ""
-            link.url = ""
-            link.weight = ""
-            link.group = ""
+class AddEditPageHandler(webapp.RequestHandler):
+    def get(self, url=None):
+        if url is None:
+            page = Page()
+            page.title = ""
+            page.content = ""
+            page.sidebar = ""
+            page.url = ""
+            public = ""
         else:
-            link = Link(key=key)
-            link.get()
+            page = Page(url=url)
+            page.get()
+            if page.is_public:
+                public = " checked=\"checked\""
+            else:
+                public = ""
         self.response.out.write("""
             <form method="post">
-                <label>Name</label>
-                <input type="text" name="name" value="%s" /><br />
                 <label>Title</label>
                 <input type="text" name="title" value="%s" /><br />
                 <label>URL</label>
                 <input type="text" name="url" value="%s" /><br />
-                <label>Weight</label>
-                <input type="text" name="weight" value="%s" /><br />
-                <label>Group</label>
-                <input type="text" name="group" value="%s" /><br />
+                <label>Public?</label>
+                <input type="checkbox" name="is_public" value="True"%s /><br />
+                <label>Content</label>
+                <textarea name="content">%s</textarea>
+                <label>Sidebar</label>
+                <textarea name="sidebar">%s</textarea>
                 <input type="submit">
-            </form>""" % (link.name, link.title, link.url, link.weight, link.group))
+            </form>""" % (page.title, page.url, public, page.content, page.sidebar))
 
-    def post(self, key=None):
-        link = Link()
-        if key is not None:
-            link.key = key
-            link.get()
-        link.name = self.request.POST['name']
-        link.title = self.request.POST['title']
-        link.url = self.request.POST['url']
-        link.weight = self.request.POST['weight']
-        link.group = self.request.POST['group']
-        link.save()
+    def post(self, url=None):
+        page = Page()
+        if url is not None:
+            page.url = url
+            page.get()
+        page.title = self.request.POST['title']
+        page.content = self.request.POST['content']
+        page.sidebar = self.request.POST['sidebar']
+        page.url = self.request.POST['url']
+        public = self.request.POST['is_public']
+        if public == "True":
+            page.is_public = True
+        else:
+            page.is_public = False
+        page.save()
 
 application = webapp.WSGIApplication([
-                                ('/admin/links/add', AddEditLinkHandler),
-                                ('/admin/links/edit/(.*)', AddEditLinkHandler),
-                                ('/admin/links/add/', AddEditLinkHandler)
+                                ('/admin/pages/add', AddEditPageHandler),
+                                ('/admin/pages/edit/(.*)', AddEditPageHandler),
+                                ('/admin/pages/add/', AddEditPageHandler)
                                 ], debug=True)
 
 def main():
