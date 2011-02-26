@@ -14,6 +14,7 @@ from errors.page import PageNotFoundException
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
+from google.appengine.api import users
 
 class ViewPageHandler(webapp.RequestHandler):
     def get(self, url):
@@ -24,13 +25,16 @@ class ViewPageHandler(webapp.RequestHandler):
         except PageNotFoundException:
             self.response.out.write("404")
         else:
-            template_values = {
-                'content' : page.content,
-                'title' : page.title,
-                'sidebar' : page.sidebar
-            }
-            path = os.path.join(os.path.dirname(__file__), '../../template/hauk', 'secondary.html')
-            self.response.out.write(template.render(path, template_values))
+            if not page.is_public and not users.is_current_user_admin():
+                self.response.out.write("404")
+            else:
+                template_values = {
+                    'content' : page.content,
+                    'title' : page.title,
+                    'sidebar' : page.sidebar
+                }
+                path = os.path.join(os.path.dirname(__file__), '../../template/hauk', 'secondary.html')
+                self.response.out.write(template.render(path, template_values))
 
 application = webapp.WSGIApplication([
     ('/(.*)', ViewPageHandler)
