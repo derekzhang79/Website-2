@@ -10,7 +10,7 @@ import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 
 from datastore import PageData
-from exceptions.page import *
+from exceptions import page as exception
 
 reserved_urls = ['projects', 'project', 'products', 'product', 'team', 'image', 'images', 'style', 'js', 'portfolio', 'admin', 'reviews', 'review', 'services', 'service', 'file']
 
@@ -78,11 +78,11 @@ class Page():
         PageURLReservedException will be thrown."""
 
         if self.datastore is None:
-            raise PageNotInstantiatedException
+            raise exception.PageNotInstantiatedException
         else:
             if self.url and self.url != self.datastore.url:
                 if self.url in reserved_urls:
-                    raise PageURLReservedException, self.url
+                    raise exception.PageURLReservedException, self.url
                 else:
                     try:
                         duplicate = Page(self.url)
@@ -90,7 +90,7 @@ class Page():
                     except PageNotFoundException:
                         pass
                     else:
-                        raise PageURLTakenException, self.url
+                        raise exception.PageURLTakenException, self.url
             self.datastore.title = self.title
             self.datastore.content = self.content
             self.datastore.url = self.url
@@ -105,11 +105,11 @@ class Page():
         self.url is None."""
 
         if self.url is None:
-            raise PageNotInstantiatedException
+            raise exception.PageNotInstantiatedException
         else:
             datastore = PageData.all().filter("url =", self.url).get()
             if datastore is None:
-                raise PageNotFoundException, self.url
+                raise exception.PageNotFoundException, self.url
             else:
                 self.datastore = datastore
                 self.title = datastore.title
@@ -130,7 +130,7 @@ class Page():
         PageNotInstantiatedException if self.datastore is None."""
 
         if self.datastore is None:
-            raise PageNotInstantiatedException
+            raise exception.PageNotInstantiatedException
         else:
             self.datastore.delete()
             self.datastore = None
