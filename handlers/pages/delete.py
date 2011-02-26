@@ -35,7 +35,7 @@ class DeletePageHandler(webapp.RequestHandler):
                 href="/admin/pages/edit/%s" title="Edit %s">the page's edit
                 page</a>.</p>""" % (page.url, page.title)
             template_values = {
-                'title' : 'Delete Page "%"' % page.title,
+                'title' : 'Delete Page "%s"' % page.title,
                 'content' : content,
                 'sidebar' : sidebar
             }
