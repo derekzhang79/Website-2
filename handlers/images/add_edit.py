@@ -11,6 +11,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 
 from models.image import Image
 from google.appengine.ext import webapp
+from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
 
 class AddEditImageHandler(webapp.RequestHandler):
@@ -18,20 +19,40 @@ class AddEditImageHandler(webapp.RequestHandler):
         if image is None:
             img = ""
             shortname = ""
+            action = "Add"
+            name = ""
         else:
             image_data = Image(shortname=image)
             image_data.get()
             img = '<img src="/image/%s" /><br />' % image_data.shortname
             shortname = image_data.shortname
-        self.response.out.write("""
-            <form enctype="multipart/form-data" method="post">
-                %s
-                <label>Image</label>
-                <input type="file" name="image" /><br />
-                <label>Short Name</label>
-                <input type="text" name="shortname" value="%s" /><br />
-                <input type="submit">
-            </form>""" % (img, shortname))
+            action = "Edit"
+            name = ' "%s"' % shortname
+        content = """<h2>%s Image%s</h2>
+            <p>
+                <form enctype="multipart/form-data" method="post">
+                    %s
+                    <label>Image</label>
+                    <input type="file" name="image" /><br />
+                    <label>Short Name</label>
+                    <input type="text" name="shortname" value="%s" /><br />
+                    <input type="submit">
+                </form>
+            </p>""" % (action, name, img, shortname)
+        sidebar = """<h2>Hint!</h2>
+        <p><b>Image</b>: Choose the image file you want to upload.<br />
+        <b>Short Name</b>: Choose the short name for the image. This will be the
+        URL for the image, so a shortname of 'logo' will make the image
+        accessible at http://www.secondbit.org/images/logo.
+        </p>"""
+        title = "%s Image%s" % (action, name)
+        template_values = {
+            'title' : title,
+            'content' : content,
+            'sidebar' : sidebar
+        }
+        path = ps.path.join(os.path.dirname(__file__), "../../template/hauk", "secondary.html")
+        self.response.out.write(template.render(path, template_values))
 
     def post(self, shortname=None):
         image = Image()
@@ -42,6 +63,7 @@ class AddEditImageHandler(webapp.RequestHandler):
         image.mimetype = self.request.POST["image"].type
         image.shortname = self.request.POST["shortname"]
         image.save()
+        self.redirect("/%s" % image.shortname)
 
 application = webapp.WSGIApplication([
                                 ('/admin/images/add', AddEditImageHandler),
