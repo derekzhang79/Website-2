@@ -13,6 +13,7 @@ from models.image import Image
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
+from django.utils import simplejson
 
 class AddEditImageHandler(webapp.RequestHandler):
     def get(self, image=None):
@@ -65,7 +66,7 @@ class AddEditImageHandler(webapp.RequestHandler):
             pass
         else:
             if uploaded_image is not None and uploaded_image is not "":
-                logging.info(JSON.dumps(uploaded_image))
+                logging.info(simplejson.dumps(uploaded_image))
                 image.image = uploaded_image.value
                 image.mimetype = uploaded_image.type
         image.shortname = self.request.POST["shortname"]
