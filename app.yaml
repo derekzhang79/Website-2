@@ -36,6 +36,12 @@ handlers:
 - url: /admin/pages/delete/.*
   script: handlers/pages/delete.py
   login: admin
+- url: /admin/pages
+  script: handlers/pages/list.py
+  login: admin
+- url: /admin/pages/
+  script: handlers/pages/list.py
+  login: admin
 - url: /images
   static_dir: template/hauk/images
 - url: /favicon.ico
