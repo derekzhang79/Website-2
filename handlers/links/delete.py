@@ -31,7 +31,7 @@ class DeleteLinkHandler(webapp.RequestHandler):
             to do this.</p>"""
             template_values = {
                 'content' : content,
-                'title' : 'Delete Link "%s"', % link.name
+                'title' : 'Delete Link "%s"' % link.name,
                 'sidebar' : sidebar
             }
             path = os.path.join(os.path.dirname(__file__), '../../template/hauk', 'secondary.html')
