@@ -71,7 +71,7 @@ class AddEditImageHandler(webapp.RequestHandler):
                 image.mimetype = uploaded_image.type
         image.shortname = self.request.POST["shortname"]
         image.save()
-        self.redirect("/%s" % image.shortname)
+        self.redirect("/image/%s" % image.shortname)
 
 application = webapp.WSGIApplication([
                                 ('/admin/images/add', AddEditImageHandler),
