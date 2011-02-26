@@ -2,7 +2,7 @@
 #
 #Authors:
 #   Paddy Foran <paddy@secondbit.org>
-#Last Modified: 2/22/11
+#Last Modified: 2/26/11
 #
 #Defines the datastore interface for uploaded images.
 
@@ -133,7 +133,7 @@ class Image():
             self.uploaded_on = datetime.datetime.today()
             self.height = height
             self.width = width
-            self.shortname = "%s_%sx%s" % (self.shortname, self.height, self.width)
+            self.shortname = "%s_%sx%s" % (self.shortname, self.width, self.height)
             self.save()
 
     def get_list(self):
