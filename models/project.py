@@ -72,7 +72,7 @@ class Project():
             self.modified_on = datastore.modified_on
             self.modified_by = datastore.modified_by
         else:
-            self.datastore = PageData()
+            self.datastore = ProjectData()
         if nature is not None:
             self.nature = nature
         if name is not None:

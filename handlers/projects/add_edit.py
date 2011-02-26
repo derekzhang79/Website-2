@@ -34,6 +34,8 @@ class AddEditProjectHandler(webapp.RequestHandler):
             project.featured_link = ""
             action = "Add"
             name = ""
+            is_product = ""
+            is_project = ""
         else:
             project = Project(url=url)
             try:
@@ -53,16 +55,17 @@ class AddEditProjectHandler(webapp.RequestHandler):
             else:
                 is_product = ""
         image = Image()
-        images = image..get_list()
+        images = image.get_list()
         screenshot_string = ""
         icon_string = ""
         for tmp_image in images:
             screenshot_selected = ""
             icon_selected = ""
-            if tmp_image.shortname == project.screenshot.shortname:
-                screenshot_selected = " selected=\"selected\""
-            if tmp_image.shortname == project.icon.shortname:
-                icon_selected = " selected=\"selected\""
+            if project.screenshot != "":
+                if tmp_image.shortname == project.screenshot.shortname:
+                    screenshot_selected = " selected=\"selected\""
+                if tmp_image.shortname == project.icon.shortname:
+                    icon_selected = " selected=\"selected\""
             screenshot_string += "\n<option value=\"%s\"%s>%s</option>" % (tmp_image.shortname, screenshot_selected, tmp_image.shortname)
             icon_string += "\n<option value=\"%s\"%s>%s</option>" % (tmp_image.shortname, icon_selected, tmp_image.shortname)
         content = """<h2>%s Project%s</h2>
@@ -80,7 +83,7 @@ class AddEditProjectHandler(webapp.RequestHandler):
                     <label>Description</label>
                     <textarea name="description">%s</textarea><br />
                     <label>Excerpt</label>
-                    <textarea name="excerpt">%s</textarea>
+                    <textarea name="excerpt">%s</textarea><br />
                     <label>Screenshot</label>
                     <select name="screenshot">%s
                     </select><a href="/admin/images/add" title="Add New">Add New</a><br />
@@ -126,7 +129,7 @@ class AddEditProjectHandler(webapp.RequestHandler):
         path = os.path.join(os.path.dirname(__file__), '../../template/hauk', 'secondary.html')
         self.response.out.write(template.render(path, template_values))
 
-    def post(self, url=None):
+    #def post(self, url=None):
         #page = Page()
         #if url is not None:
         #    page.url = url
