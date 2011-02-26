@@ -34,11 +34,11 @@ handlers:
   script: handlers/pages/add_edit.py
   login: admin
 - url: /images
-  static_dir: template/images
+  static_dir: template/hauk/images
 - url: /js
-  static_dir: template/js
+  static_dir: template/hauk/js
 - url: /style
-  static_dir: template/style
+  static_dir: template/hauk/style
 - url: /404
   static_files: template/404.html
   upload: template/404.html
