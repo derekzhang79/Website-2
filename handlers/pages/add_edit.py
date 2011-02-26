@@ -66,9 +66,9 @@ class AddEditPageHandler(webapp.RequestHandler):
                 is in the sidebar).<br />
             <br />
             <i>The content and sidebar inputs should each begin with
-            "<h2>Section Title</h2>" and be followed by "<p>This is the
-            text...</p>" to avoid rendering issues, plugging in the desired
-            section title and text.</i>
+            "&lt;h2&gt;Section Title&lt;/h2&gt;" and be followed by
+            "&lt;p&gt;This is the text...&lt;/p&gt;" to avoid rendering issues,
+            plugging in the desired section title and text.</i>
         </p>"""
         title = "%s Page%s" % (action, name)
         template_values = {
