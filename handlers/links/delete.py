@@ -21,12 +21,13 @@ class DeleteLinkHandler(webapp.RequestHandler):
         else:
             link = Link(key=key)
             link.get()
-            content = """<form method="post">
+            content = """<h2>Deleting Link "%s"</h2>
                 <p>
                 Are you sure you want to delete <a href="%s" title="%s">%s</a>?
                 </p>
-                <input type="submit" value="Yes" />
-            </form>""" % (link.url, link.title, link.name)
+                <form method="post">
+                    <input type="submit" value="Yes" />
+            </form>""" % (link.name, link.url, link.title, link.name)
             sidebar = """<h2>Warning</h2>
             <p>When a link is deleted, it is gone for good. Make sure you want
             to do this.</p>"""
