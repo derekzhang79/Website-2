@@ -28,7 +28,7 @@ class ListLinksHandler(webapp.RequestHandler):
             <th>Actions</th>
         </tr>"""
         for link in links:
-            modified_on = datetime.datetime.strftime("%m/%d/%y %H:%M")
+            modified_on = link.modified_on.strftime("%m/%d/%y %H:%M")
             content += """<h2>Links</h2>
             <tr>
                 <td><a title="%s" href="%s">%s</a></td>
