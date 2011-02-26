@@ -27,15 +27,15 @@ class DeletePageHandler(webapp.RequestHandler):
                     <form method="post">
                         <input type="submit" value="Yes" />
                     </form>
-                </p>""" % (page.name, page.name)
+                </p>""" % (page.title, page.title)
             sidebar = """<h2>Careful!</h2>
                 <p>Once you delete this page, it's gone forever! Make sure you
                 want to do this. If in doubt, just mark the page as private, and
                 only admins will be able to see it. You can do this in <a
                 href="/admin/pages/edit/%s" title="Edit %s">the page's edit
-                page</a>.</p>""" % (page.url, page.name)
+                page</a>.</p>""" % (page.url, page.title)
             template_values = {
-                'title' : 'Delete Page "%"' % page.name,
+                'title' : 'Delete Page "%"' % page.title,
                 'content' : content,
                 'sidebar' : sidebar
             }
