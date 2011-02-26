@@ -2,7 +2,7 @@
 #
 #Authors:
 #   Paddy Foran <paddy@secondbit.org>
-#Last Modified: 2/22/11
+#Last Modified: 2/26/11
 #
 #Handles requests to add or edit an image.
 
