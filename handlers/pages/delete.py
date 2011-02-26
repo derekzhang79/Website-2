@@ -57,7 +57,7 @@ class DeletePageHandler(webapp.RequestHandler):
             self.redirect("/admin/pages")
 
 application = webapp.WSGIApplication([
-                                ('/admin/links/delete/(.*)', DeletePageHandler)
+                                ('/admin/pages/delete/(.*)', DeletePageHandler)
                                 ], debug=True)
 
 def main():
