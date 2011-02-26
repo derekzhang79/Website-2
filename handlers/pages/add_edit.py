@@ -53,7 +53,10 @@ class AddEditPageHandler(webapp.RequestHandler):
         page.content = self.request.POST['content']
         page.sidebar = self.request.POST['sidebar']
         page.url = self.request.POST['url']
-        public = self.request.POST['is_public']
+        try:
+            public = self.request.POST['is_public']
+        except KeyError:
+            public = "False"
         if public == "True":
             page.is_public = True
         else:
