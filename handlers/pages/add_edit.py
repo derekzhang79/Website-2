@@ -38,9 +38,9 @@ class AddEditPageHandler(webapp.RequestHandler):
                 <label>Public?</label>
                 <input type="checkbox" name="is_public" value="True"%s /><br />
                 <label>Content</label>
-                <textarea name="content">%s</textarea>
+                <textarea name="content">%s</textarea><br />
                 <label>Sidebar</label>
-                <textarea name="sidebar">%s</textarea>
+                <textarea name="sidebar">%s</textarea><br />
                 <input type="submit">
             </form>""" % (page.title, page.url, public, page.content, page.sidebar))
 

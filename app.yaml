@@ -30,6 +30,9 @@ handlers:
 - url: /admin/links/
   script: handlers/links/list.py
   login: admin
+- url: /admin/pages/(add|edit).*
+  script: handlers/pages/add_edit.py
+  login: admin
 - url: /images
   static_dir: template/images
 - url: /js
@@ -39,13 +42,3 @@ handlers:
 - url: /404
   static_files: template/404.html
   upload: template/404.html
-- url: /admin
-  script: admin/dashboard.py
-- url: /admin/(add|edit).*
-  script: admin/edit.py
-- url: /portfolio
-  script: portfolio.py
-- url: /
-  script: main.py
-- url: .*
-  script: page.py
