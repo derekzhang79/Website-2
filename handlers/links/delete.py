@@ -1,4 +1,4 @@
-#/handlers/link/delete.py
+#/handlers/links/delete.py
 #
 #Authors:
 #   Paddy Foran <paddy@secondbit.org>
@@ -30,9 +30,9 @@ class DeleteLinkHandler(webapp.RequestHandler):
             <p>When a link is deleted, it is gone for good. Make sure you want
             to do this.</p>"""
             template_values = {
-                'content' = content,
-                'title' = 'Delete Link "%s"',
-                'sidebar' = sidebar
+                'content' : content,
+                'title' : 'Delete Link "%s"',
+                'sidebar' : sidebar
             } % link.name
             path = os.path.join(os.path.dirname(__file__), '../../template/hauk', 'secondary.html')
             self.response.out.write(template.render(path, template_values))
