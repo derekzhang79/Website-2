@@ -12,6 +12,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 from datastore import ImageData
 from google.appengine.api import images, users
 from google.appengine.ext import db
+from errors.image import *
 import datetime
 
 class Image():

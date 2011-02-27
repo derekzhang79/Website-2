@@ -14,7 +14,7 @@ from models.link import Link
 from models.image import Image
 from errors.project import *
 from errors.image import *
-from google.appengine.ext import webapp
+from google.appengine.ext import webapp, db
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
 
@@ -59,16 +59,35 @@ class AddEditProjectHandler(webapp.RequestHandler):
         images = image.get_list()
         screenshot_string = ""
         icon_string = ""
+        images_string = ""
         for tmp_image in images:
             screenshot_selected = ""
             icon_selected = ""
+            images_selected = ""
             if project.screenshot != "":
                 if tmp_image.shortname == project.screenshot.shortname:
                     screenshot_selected = " selected=\"selected\""
+            if project.icon != "":
                 if tmp_image.shortname == project.icon.shortname:
                     icon_selected = " selected=\"selected\""
+            if tmp_image.key() in project.images:
+                images_selected = " selected=\"selected\""
             screenshot_string += "\n<option value=\"%s\"%s>%s</option>" % (tmp_image.shortname, screenshot_selected, tmp_image.shortname)
             icon_string += "\n<option value=\"%s\"%s>%s</option>" % (tmp_image.shortname, icon_selected, tmp_image.shortname)
+            images_string += "\n<option value=\"%s\"%s>%s</option>" % (tmp_image.key(), images_selected, tmp_image.shortname)
+        link = Link(group="special_projects_featured")
+        links = link.get_group()
+        links_string = ""
+        count = 0
+        for tmp_link in links:
+            selected = ""
+            if project.featured_link == tmp_link:
+                selected = " selected=\"selected\""
+            links_string += "\n<input type=\"radio\" name=\"featured_link\" value=\"%s\"%s> <a href=\"%s\" title=\"%s\">%s</a>" % (tmp_link.key(), selected, tmp_link.url, tmp_link.title, tmp_link.name)
+            count += 1
+            if count >= 4:
+                links_string += "<br />"
+                count = 0
         content = """<h2>%s Project%s</h2>
             <p>
                 <form method="post">
@@ -91,13 +110,18 @@ class AddEditProjectHandler(webapp.RequestHandler):
                     <label>Icon</label>
                     <select name="icon">%s
                     </select><a href="/admin/images/add" title="Add New">Add New</a><br />
+                    <label>Images</label>
+                    <select name="images" multiple="multiple">%s
+                    </select><a href="/admin/images/add" title="Add New">Add New</a><br />
                     <label>Featured?</label>
                     <input type="checkbox" name="featured" value="True"%s /><br />
+                    <label>Featured Link</label>
+                    %s<br /><a href="/admin/links/add?group=special_featured_projects" title="Add New">Add New</a><br />
                     <label>Open Source</label>
                     <input type="checkbox" name="open_source" value="True"%s /><br />
                     <input type="submit">
                 </form>
-            <p>""" % (action, name, project.name, project.url, is_project, is_product, project.description, project.excerpt, screenshot_string, icon_string, project.featured, project.open_source)
+            <p>""" % (action, name, project.name, project.url, is_project, is_product, project.description, project.excerpt, screenshot_string, icon_string, images_string, project.featured, links_string, project.open_source)
         sidebar = """<h2>Hints!</h2>
         <p>
             <b>Name</b>: The name of the project.<br />
@@ -136,11 +160,26 @@ class AddEditProjectHandler(webapp.RequestHandler):
         if url is not None:
             project.url = url
             project.get()
-        project.nature = self.request.POST['nature']
-        project.name = self.request.POST['name']
-        project.description = self.request.POST['description']
-        project.excerpt = self.request.POST['excerpt']
-        project.url = self.request.POST['url']
+        try:
+            project.nature = self.request.POST['nature']
+        except KeyError:
+            pass
+        try:
+            project.name = self.request.POST['name']
+        except KeyError:
+            pass
+        try:
+            project.description = self.request.POST['description']
+        except KeyError:
+            pass
+        try:
+            project.excerpt = self.request.POST['excerpt']
+        except KeyError:
+            pass
+        try:
+            project.url = self.request.POST['url']
+        except KeyError:
+            pass
         try:
             featured = self.request.POST['featured']
         except KeyError:
@@ -157,21 +196,38 @@ class AddEditProjectHandler(webapp.RequestHandler):
             project.open_source = True
         else:
             project.open_source = False
-        screenshot = Image(shortname=self.request.POST['screenshot'])
+        try:
+            screenshot = Image(shortname=self.request.POST['screenshot'])
+        except KeyError:
+            pass
         try:
             screenshot.get()
         except ImageNotFoundError:
             pass
         else:
             project.screenshot = screenshot.datastore
-        icon = Image(shortname=self.request.POST['icon'])
+        try:
+            icon = Image(shortname=self.request.POST['icon'])
+        except KeyError:
+            pass
         try:
             icon.get()
         except ImageNotFoundError:
             pass
         else:
             project.icon = icon.datastore
-        project.images = []
+        images = self.request.get_all('images')
+        count = 0
+        for image in images:
+            images[count] = db.Key(image)
+            count += 1
+        project.images = images
+        try:
+            featured_link = self.request.POST['featured_link']
+        except KeyError:
+            pass
+        else:
+            project.featured_link = db.Key(featured_link)
         project.save()
         self.redirect("/projects/%s" % project.url)
 

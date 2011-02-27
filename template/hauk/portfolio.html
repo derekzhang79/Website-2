@@ -69,7 +69,7 @@
 		 <div id="left-column" class="twothirds">
 			 <h2>{{ name }}</h2>
 			 {% for image in images %}
-			 <a href="/image/{{image.shortname}}" class="fancybox"><img src="/image/{{image.shortname}_166x500" class="portfolio-thumb" width="166" /></a>
+			 <a href="/projects/{{ url }}/image/{{ image.shortname }}.png" class="fancybox"><img src="/projects/{{ url }}/thumb/{{image.shortname}}.png" class="portfolio-thumb" width="166" /></a>
 			 {% endfor %}
 			 {{ description }}
 		 </div> <!-- #left-column -->

@@ -12,7 +12,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 from models.project import Project
 from errors.project import ProjectNotFoundException
 from models.link import Link
-from google.appengine.ext import webapp
+from google.appengine.ext import webapp, db
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
 
@@ -27,10 +27,12 @@ class ViewProjectHandler(webapp.RequestHandler):
         except ProjectNotFoundException:
             self.response.out.write("404")
         else:
+            images = db.get(project.images)
             template_values = {
                 'name' : project.name,
+                'url' : project.url,
                 'links' : links,
-                'images' : project.images,
+                'images' : images,
                 'description' : project.description
             }
             path = os.path.join(os.path.dirname(__file__), '../../template/hauk', 'portfolio.html')
