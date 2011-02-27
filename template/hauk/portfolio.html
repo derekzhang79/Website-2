@@ -67,23 +67,20 @@
 	
 	<!-- Left Column -->
 		 <div id="left-column" class="twothirds">
-		 	  <h2>android2cloud</h2>
-			  <a href="/images/placeholder.png" class="fancybox"><img src="/images/placeholder.png" class="portfolio-thumb" width="166" /></a>
-			  <a href="/images/placeholder.png" class="fancybox"><img src="/images/placeholder.png" class="portfolio-thumb thumb-middle" width="166" /></a>
-			  <a href="/images/placeholder.png" class="fancybox"><img src="/images/placeholder.png" class="portfolio-thumb" width="166" /></a>
-			  <p>android2cloud was born from the 2010 Google I/O demo, in which Android 2.2 (codenamed "Froyo") was demonstrated. Froyo has a cool cloud-to-android push functionality, in which you can use an extension in chrome (or anything else really) and push the current webpage directly to your android phone, which will react intelligently.</p>
-			  <p>android2cloud was meant to fill the other half of that relationship. When using your android device, it is easy to come across long articles or things not suited for viewing on a phone. android2cloud takes advantage of the "Share" intent on Android, allowing you to push those articles and webpages to your browser with the push of a button.</p>
-			  <p>Open source and free to use, android2cloud has become one of the top applications in both the Chrome webstore and the Android Market. It has been covered by Lifehacker, Androinica, Android Central, and countless other publications.</p>
+			 <h2>{{ name }}</h2>
+			 {% for image in images %}
+			 <a href="/image/{{image.shortname}}" class="fancybox"><img src="/image/{{image.shortname}_166x500" class="portfolio-thumb" width="166" /></a>
+			 {% endfor %}
+			 {{ description }}
 		 </div> <!-- #left-column -->
 	
 	<!-- Right Column -->
 		 <div id="right-column" class="onethird portfolio-sidebar">
-		 	<h2>Project links</h2>
+		 	<h2>Project Links</h2>
 			<ul>
-			      <li><a href="#">Lorem ipsum</a></li>
-				  <li><a href="#">Duis autem vel eum iriure dolor</a></li>
-				  <li><a href="#">Investigationes demonstraverunt</a></li>
-				  <li><a href="#">Ut wisi enim ad minim</a></li>
+			{% for link in links %}
+			<li><a href="{{ link.url }}" title="{{ link.title }}">{{ link.name }}</a></li>
+			{% endfor %}
 			  </ul>
 			
 			<h2>Reviews</h2>

@@ -139,4 +139,4 @@ class Image():
     def get_list(self):
         """Returns a Query object for up to 1,000 ImageData objects."""
 
-        return ImageData.all().fetch(1000)
+        return ImageData.all().order("-uploaded_on").fetch(1000)

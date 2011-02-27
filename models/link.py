@@ -135,4 +135,4 @@ class Link():
     def get_list(self):
         """Returns a Query object for up to 1,000 LinkData objects."""
 
-        return LinkData.all().fetch(1000)
+        return LinkData.all().order("group").order("weight").fetch(1000)

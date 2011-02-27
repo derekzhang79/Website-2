@@ -123,7 +123,7 @@ class Page():
     def get_list(self):
         """Returns a Query object for up to 1,000 PageData objects."""
 
-        return PageData.all().fetch(1000)
+        return PageData.all().order("-modified_on").fetch(1000)
 
     def delete(self):
         """Removes self.datastore from the datastore. Throws a
