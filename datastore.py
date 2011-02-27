@@ -58,10 +58,13 @@ class ServiceData(db.Model):
     description = db.TextProperty()
     excerpt = db.StringProperty(multiline=True)
     featured = db.BooleanProperty()
+    modified_on = db.DateTimeProperty(auto_now=True)
+    modified_by = db.UserProperty(auto_current_user=True)
 
 class ProjectServiceData(db.Model):
     project = db.ReferenceProperty(ProjectData, collection_name='services')
     service = db.ReferenceProperty(ServiceData, collection_name='projects')
+    content = db.StringProperty(multiline=True)
 
 class UploadData(db.Model):
     upload = db.Blob()
