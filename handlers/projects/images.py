@@ -35,13 +35,17 @@ class ProjectThumbHandler(webapp.RequestHandler):
             height = image.height
             factor = 2
             while width < 166:
-                width = width / factor
-                height = height / factor
+                width = width * factor
+                height = height * factor
+                factor = factor * factor
+        else:
+            height = image.height
         thumb = Image(shortname="%s_%sx%s" % (shortname, 166, height))
         try:
             thumb.get()
         except ImageNotFoundException:
-            image.resize(height=height, width=166)
+            if image.width != 166:
+                image.resize(height=height, width=166)
             thumb = image
         self.response.headers['Content-Type'] = thumb.mimetype
         self.response.out.write(thumb.image)
