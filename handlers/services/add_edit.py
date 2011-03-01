@@ -41,7 +41,7 @@ class AddEditServiceHandler(webapp.RequestHandler):
             else:
                 featured = ""
             if service.icon is not None:
-                icon = "<img src=\"/service/%s/icon\" alt=\"%s's icon\" /><br />" % (service.url, service.title)
+                icon = "<img src=\"/services/%s/icon\" alt=\"%s's icon\" /><br />" % (service.url, service.title)
         image = Image()
         images = image.get_list()
         image_string = ""
@@ -74,7 +74,7 @@ class AddEditServiceHandler(webapp.RequestHandler):
         sidebar = """<h2>Hints!</h2>
         <p>
             <b>Title</b>: The name of the service.<br />
-            <b>URL</b>: The slug for the page. http://www.secondbit.org/service/android's
+            <b>URL</b>: The slug for the page. http://www.secondbit.org/services/android's
                 slug is 'android'.<br />
             <b>Featured?</b>: Should this service be listed on the home page?<br />
             <b>Description</b>: A longer explanation, in HTML, of the service
@@ -116,7 +116,7 @@ class AddEditServiceHandler(webapp.RequestHandler):
         else:
             service.featured = False
         service.save()
-        self.redirect("/service/%s" % service.url)
+        self.redirect("/services/%s" % service.url)
 
 application = webapp.WSGIApplication([
                                 ('/admin/services/add', AddEditServiceHandler),
