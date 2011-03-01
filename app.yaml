@@ -51,6 +51,9 @@ handlers:
 - url: /admin/projects/
   script: handlers/projects/list.py
   login: admin
+- url: /admin/services/(add|edit).*
+  script: handlers/services/add_edit.py
+  login: admin
 - url: /projects/[^/]*/(image|thumb)/.*
   script: handlers/projects/images.py
 - url: /projects/.*

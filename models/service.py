@@ -10,6 +10,7 @@ import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 
 from datastore import ServiceData
+from errors.service import *
 
 class Service():
     """Defines datastore interactions for services on the site."""
