@@ -65,8 +65,7 @@ class AddEditImageHandler(webapp.RequestHandler):
         except KeyError:
             pass
         else:
-            if uploaded_image is not None and uploaded_image.strip() != "":
-                logging.info(simplejson.dumps(uploaded_image))
+            if uploaded_image is not None and uploaded_image != "":
                 image.image = uploaded_image.value
                 image.mimetype = uploaded_image.type
         image.shortname = self.request.POST["shortname"]
