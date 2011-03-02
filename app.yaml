@@ -60,6 +60,8 @@ handlers:
   script: handlers/projects/view.py
 - url: /services/[^/]*/icon
   script: handlers/services/images.py
+- url: /services/.*
+  script: handlers/services/view.py
 - url: /images
   static_dir: template/hauk/images
 - url: /favicon.ico
