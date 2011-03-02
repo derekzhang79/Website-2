@@ -66,7 +66,8 @@ class AddEditServiceHandler(webapp.RequestHandler):
                     <label>Icon</label>
                     <select name="icon">
                         %s
-                    </select><br />
+                    </select><a href="/admin/images/add" title"Upload New
+                    Icon">Add new image</a><br />
                     %s
                     <input type="submit">
                 </form>
@@ -85,7 +86,8 @@ class AddEditServiceHandler(webapp.RequestHandler):
             page.<br />
             <br />
             <i>The Description and Excerpt fields should be contained within
-            &lt;p&gt; tags.</i>
+            &lt;p&gt; tags. <b>Warning</b>: If you use the link to upload a 
+            new icon, your progress on this page will not be saved.</i>
             <br />
         </p>"""
         title = "%s Service%s" % (action, name)
