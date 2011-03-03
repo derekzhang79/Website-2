@@ -11,6 +11,9 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 
 from datastore import ServiceData
 from errors.service import *
+from models.project import *
+from models.prject_service import *
+from errors.project_service import *
 
 class Service():
     """Defines datastore interactions for services on the site."""

@@ -10,6 +10,9 @@ import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 
 from datastore import ProjectServiceData
+from models.project import Project
+from models.service import Service
+from errors.project_service import *
 
 class ProjectService():
     """Defines datastore interactions for the Has-And-Belongs-To-Many
