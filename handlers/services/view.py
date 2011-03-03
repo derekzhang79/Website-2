@@ -25,16 +25,24 @@ class ViewServiceHandler(webapp.RequestHandler):
             self.response.out.write("404")
         else:
             header = """<style type="text/css">
-            #services .%s { background: url('/services/%s/icon') no-repeat top left; }
+            #services .service-icon-%s { background: url('/services/%s/icon') no-repeat top left; }
+            ul#services, ul#services li { list-style: none; padding: 0px 0px; }
             </style>""" % (service.url, service.url)
             content = """<ul id="services">
-                <li class="%s onethird">
+                <li class="service-icon-%s">
                     <h3>%s</h3>
                     %s
                 </li>
             </ul>""" % (service.url, service.title, service.description)
-            sidebar = """<h2>Don't know what to put here</h2>
-            <p>What should I put here?</p>"""
+            sidebar = """<h2>Projects</h2>
+            <p>We've successfully performed this service in the following
+            projects:</p>
+            <ul>
+                <li><a href="/projects/tangles"
+                title="Tangl.es">Tangl.es</a></li>
+                <li><a href="/projects/test" title="Test Project">Test
+                Project</a></li>
+            </ul>"""
             title = "Services: %s" % service.title
             template_values = {
                 'header' : header,
