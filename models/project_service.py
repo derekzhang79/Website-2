@@ -96,3 +96,15 @@ class ProjectService():
             self.project = None
             self.service = None
             self.content = None
+
+    def get_all_matching(self):
+        """Returns a list of ProjectServiceData objects that match the current
+        ProjectService's attributes."""
+
+        results = ProjectServiceData.all()
+        if self.project is not None:
+            results.filter("project =", self.project.datastore)
+        if self.service is not None:
+            results.filter("service =", self.service.datastore)
+        results.fetch(1000)
+        return results
