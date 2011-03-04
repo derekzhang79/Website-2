@@ -2,7 +2,7 @@
 #
 #Authors:
 #   Paddy Foran <paddy@secondbit.org>
-#Last Modified: 2/26/11
+#Last Modified: 3/3/11
 #
 #Defines the datastore interface for project.
 
@@ -30,6 +30,8 @@ class Project():
     modified_on = None
     datastore = None
 
+    services = []
+
     def __init__(self, datastore=None, nature=None, name=None, description=None, excerpt=None, screenshot=None, icon=None, images=None, url=None, featured=None, open_source=None, featured_link=None):
         """Defines the initialization method for a Project object. Accepts a
         datastore reference, a nature (project or product), a name, a
@@ -54,6 +56,8 @@ class Project():
         self.modified_on = None
         self.modified_by = None
         self.datastore = None
+        
+        self.services = []
 
         if datastore is not None:
             self.datastore = datastore
@@ -152,6 +156,7 @@ class Project():
                 self.featured_link = datastore.featured_link
                 self.modified_on = datastore.modified_on
                 self.modified_by = datastore.modified_by
+                self.get_services()
 
 
     def get_list(self):
@@ -181,3 +186,51 @@ class Project():
             self.featured_link = None
             self.modified_on = None
             self.modified_by = None
+
+            self.services = []
+
+    def get_services(self):
+        """Retrieves all the ServiceData objects associated with this Project,
+        and converts them to ProjectService objects, which are returned as a
+        list. Throws a ProjectNotInstantiatedException if self.datastore is
+        None."""
+
+        if self.datastore is None:
+            raise ProjectNotInstantiatedException
+        else:
+            rel = ProjectService(project=self.datastore)
+            rel_data = rel.get_all_matching()
+            services = []
+            for relationship in rel_data:
+                services.append(ProjectService(datastore=relationship))
+            self.services = services
+
+    def add_service(self, service, content=None):
+        """Adds a ProjectServiceData object to the datastore associated with the
+        current ProjectData object. Accepts a ServiceData object as an argument.
+        Optionally accepts a content argument to explain the relationship.
+        Throws a ProjectNotInstantiatedException if self.datastore is None."""
+
+        if self.datastore is None:
+            raise ProjectNotInstantiatedException
+        else:
+            relationship = ProjectService(project=self.datastore, service=service, content = content)
+            relationship.save()
+
+    def remove_service(self, service):
+        """Removes a ProjectServiceData object from the datastore. Accepts a
+        ServiceData object as an argument. Throws a
+        ProjectNotInstantiatedException if self.datastore is None. Throws a
+        ProjectServiceNotFound exception if no datastore records match."""
+
+        if self.datastore is None:
+            raise ProjectNotInstantiatedException
+        else:
+            rel = ProjectService(service=service, project=self.datastore)
+            rel_data = rel.get_all_matching()
+            if rel_data is None or rel_data == []:
+                raise ProjectServiceNotFoundException, {"project":self.datastore.url, "service":service.url}
+            else:
+                for relationship in rel_data:
+                    relationship.delete()
+            self.get_services()
