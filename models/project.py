@@ -165,6 +165,12 @@ class Project():
 
         return ProjectData.all().fetch(1000)
 
+    def get_featured(self):
+        """Returns a Query object for up to 1,000 ProjectData objects. Will only
+        return ProjectData objects that have featured set to True."""
+        
+        return ProjectData.all().filter("featured =", True).fetch(1000)
+
     def delete(self):
         """Removes self.datastore from the datastore. Throws a
         ProjectNotInstantiatedException if self.datastore is None."""

@@ -74,5 +74,7 @@ handlers:
 - url: /404
   static_files: template/404.html
   upload: template/404.html
+- url: /
+  script: main.py
 - url: /.*
   script: handlers/pages/view.py

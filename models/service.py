@@ -130,6 +130,12 @@ class Service():
 
         return ServiceData.all().order("-modified_on").fetch(1000)
 
+    def get_featured(self):
+        """Returns a Query object for up to 1,000 ServiceData objects. Returns
+        only ServiceData objects that have featured as True."""
+
+        return ServiceData.all().filter("featured =", True).fetch(1000)
+
     def delete(self):
         """Removes self.datastore from the datastore. Throws a
         ServiceNotInstantiatedException if self.datastore is None."""

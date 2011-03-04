@@ -14,6 +14,47 @@
 	
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
 		<script type="text/javascript" src="/js/jquery.cycle.lite.1.0.min.js"></script>
+		<script type="text/javascript">
+			var projects = {
+				{% for project in projects %}
+				"project-{{ project.url|addslashes }}" : {
+					"name" : "{{ project.name|addslashes }}",
+					"excerpt" : "{{ project.excerpt|addslashes }}",
+					"url" : "{{ project.url|addslashes }}",
+					{% if project.featured_link %}
+					"link" : {
+						"url" : "{{ project.featured_link.url|addslashes }}",
+						"title" : "{{ project.featured_link.title|addslashes }}",
+						"value" : "{{ project.featured_link.name|addslashes }}"
+					}
+					{% endif %}
+				},
+				{% endfor %}
+			};
+
+			function onTransition() {
+				current = this.id;
+				$('#project-excerpt').html(projects[current].excerpt);
+				$('#project-name').html(projects[current].name);
+				$('#project-button').attr("href", "/projects/" + projects[current].url);
+				if(projects[current].hasOwnProperty('link')){
+					$('#project-link').attr("href", projects[current].link.url);
+					$('#project-link').attr("title", projects[current].link.title);
+					$('#project-link').html(projects[current].link.value);
+					$('#project-link').show();
+				}else{
+					$('#project-link').hide();
+				}
+			}
+			$(document).ready(function () {
+					$('.featured-image').cycle({after: onTransition});
+			});
+		</script>
+		<style type="text/css">
+			{% for service in services %}
+			#services .service-icon-{{ service.url }} { background: url('/services/{{ service.url }}/icon') no-repeat top left; }
+			{% endfor %}
+		</style>
 	</head>
 	
 	<body>
@@ -23,11 +64,16 @@
 			<div id="header-inner" class="inner-container">
 				<h1 id="logo"><a href="/">Second Bit, LLC.</a></h1>	
 				<ul id="main-nav">
+					<!--
 					<li><a href="/"><span>Home</span></a></li>
 					<li><a href="#"><span>About Us</span></a></li>
 					<li><a href="#"><span>The Team</span></a></li>
 					<li><a href="#"><span>Projects</span></a></li>
 					<li><a href="#"><span>Contact</span></a></li>
+					-->
+					{% for link in menu %}
+					<li><a href="{{ link.url }}" title="{{ link.title }}"><span>{{ link.name }}</span></a></li>
+					{% endfor %}
 				</ul>
 			</div> <!-- #header-inner -->
 		</div> <!-- #header -->
@@ -35,15 +81,33 @@
 		<!-- Subheader & Featured -->
 		<div id="subheader">
 			<div id="subheader-inner" class="inner-container home-featured">
-				<h2>The 2cloud Project</h2>
-				<p class="featured-text">Sharing content between multiple screens has never been so easy. Move a link between our growing list of supported browsers and mobile devices with a few taps or clicks.</p>
+				<div style="padding: 0px; margin: 0px;">
+					<h2 id="project-name"></h2>
+					<p class="featured-text" id="project-excerpt"></p>
 		
-				<div class="featured-image">
-					<img src="/images/featured/2cloud.jpg" alt="2cloud Project" />
-				</div> <!-- .featured-image -->
+					<div class="featured-image">
+						{% for project in projects %}
+						<img src="/image/{{ project.screenshot.shortname }}" id="project-{{ project.url }}" alt="{{ project.name }} Screenshot" />
+						{% endfor %}
+					</div> <!-- .featured-image -->
 
-				<a href="#" class="featured-btn view-project">View Project</a>
-				<a href="#" class="featured-btn">Go to Product</a>
+					<a href="#" class="featured-btn view-project" id="project-button" style="position: absolute; bottom: -20px;">View Project</a>
+					<a href="#" class="featured-btn" id="project-link" style="position: absolute; bottom: -20px; left: 150px;"></a>
+				</div>
+
+				<!--<div style="padding: 0px; margin:0px;">
+					<h2>{{ project.name }}</h2>
+					<p class="featured-text">{{ project.excerpt }}</p>
+
+					<div class="featured-image">
+						<img src="/image/{{ project.screenshot.shortname }}" alt="{{ project.title }} Screenshot" />
+					</div>
+
+					<a href="/projects/{{ project.url }}" class="featured-btn view-project">View Project</a>
+					{% if project.featured_link.url %}
+					<a href="{{ project.featured_link.url }}" title="{{ project.featured_link.title }}" class="featured-btn">{{ project.featured_link.name }}</a>
+					{% endif %}
+				</div> -->
 			</div> <!-- #subheader-inner -->
 		</div> <!-- #subheader -->
 
@@ -53,7 +117,7 @@
 				<h2>Here's what we do.</h2>
 				<p>With a list of services this long, I'm sure there's something we can help you with. <a href="#">Find out more about us</a>.</p>
 	
-				<ul id="services">
+				<ul id="services"><!--
 					<li class="mobile onethird">
 						<h3>Mobile Applications</h3>
 						<p>With support for iOS, Android, and mobile web applications, we can put you in your customers' pockets.</p>
@@ -82,7 +146,13 @@
 					<li class="opensource onethird">
 						<h3>Open Source Software</h3>
 						<p>We're huge fans of Open Source Software, and use it for most our business software. When we're not doing client work, we also build software and applications, released under open source licenses. <a href="#">Find a list here</a>.</p>
+						</li>-->
+					{% for service in services %}
+					<li class="service-icon-{{ service.url }} onethird {% cycle thirds-left,thirds-middle,thirds-right %}">
+						<h3>{{ service.title }}</h3>
+						<p>{{ service.excerpt }}</p>
 					</li>
+					{% endfor %}
 				</ul>
 			</div> <!-- #main-content-inner -->
 		</div> <!-- #main-content -->
