@@ -35,7 +35,7 @@ class ViewServiceHandler(webapp.RequestHandler):
                 </li>
             </ul>""" % (service.url, service.title, service.description)
             projects = ""
-            if service.projects is not None:
+            if service.projects is not None and service.projects != []:
                 projects += "<ul>"
                 for project in service.projects:
                     projects += "\n<li><a href=\"/projects/%s\" title=\"%s\">%s</a></li>" % (project.project.url, project.project.name, project.project.name)

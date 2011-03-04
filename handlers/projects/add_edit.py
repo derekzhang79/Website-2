@@ -2,7 +2,7 @@
 #
 #Authors:
 #   Paddy Foran <paddy@secondbit.org>
-#Last Modified: 2/26/11
+#Last Modified: 3/3/11
 #
 #Handles requests to add or edit a project.
 
@@ -12,6 +12,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 from models.project import Project
 from models.link import Link
 from models.image import Image
+from models.service import Service
 from errors.project import *
 from errors.image import *
 from google.appengine.ext import webapp, db
@@ -88,6 +89,21 @@ class AddEditProjectHandler(webapp.RequestHandler):
             if count >= 4:
                 links_string += "<br />"
                 count = 0
+        services = Service().get_list()
+        services_string = ""
+        if services is not None:
+            services_string += """<label>Services</label>
+            <select name="services" multiple="multiple">"""
+            service_list = []
+            for project_service in project.services:
+                service_list.append(project_service.service.key())
+            for service in services:
+                selected = ""
+                servicekey = service.key()
+                if servicekey in service_list:
+                    selected = " selected=\"selected\""
+                services_string += "\n<option value=\"%s\"%s>%s</option>" % (servicekey, selected, service.title)
+            services_string += "</select><br />"
         content = """<h2>%s Project%s</h2>
             <p>
                 <form method="post">
@@ -119,9 +135,10 @@ class AddEditProjectHandler(webapp.RequestHandler):
                     %s<br /><a href="/admin/links/add?group=special_featured_projects" title="Add New">Add New</a><br />
                     <label>Open Source</label>
                     <input type="checkbox" name="open_source" value="True"%s /><br />
+                    %s
                     <input type="submit">
                 </form>
-            <p>""" % (action, name, project.name, project.url, is_project, is_product, project.description, project.excerpt, screenshot_string, icon_string, images_string, project.featured, links_string, project.open_source)
+            <p>""" % (action, name, project.name, project.url, is_project, is_product, project.description, project.excerpt, screenshot_string, icon_string, images_string, project.featured, links_string, project.open_source, services_string)
         sidebar = """<h2>Hints!</h2>
         <p>
             <b>Name</b>: The name of the project.<br />
@@ -229,6 +246,20 @@ class AddEditProjectHandler(webapp.RequestHandler):
         else:
             project.featured_link = db.Key(featured_link)
         project.save()
+        services = self.request.get_all('services')
+        service_list = []
+        for project_service in project.services:
+            service_list.append(project_service.service.key())
+        for service in services:
+            servicekey = db.Key(service)
+            if servicekey not in service_list:
+                project.add_service(servicekey)
+            else:
+                occurrences = range(0, service_list.count(servicekey))
+                for instance in occurrences:
+                    service_list.remove(servicekey)
+        for deselected_service in service_list:
+            project.remove_service(deselected_service)
         self.redirect("/projects/%s" % project.url)
 
 application = webapp.WSGIApplication([
