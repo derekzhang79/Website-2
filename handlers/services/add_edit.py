@@ -9,7 +9,7 @@
 import sys, os, logging
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 
-from models.service import Service
+from models.project_service import *
 from models.image import Image
 from errors.service import *
 from google.appengine.ext import webapp, db

@@ -10,7 +10,6 @@ import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 
 from datastore import ProjectData
-from errors.project import *
 
 class Project():
     """Defines datastore interactions for projects on the site."""

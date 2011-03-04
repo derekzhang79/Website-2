@@ -10,8 +10,6 @@ import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 
 from datastore import ProjectServiceData
-from models.project import Project
-from models.service import Service
 from errors.project_service import *
 
 class ProjectService():
@@ -41,16 +39,16 @@ class ProjectService():
 
         if datastore is not None:
             self.datastore = datastore
-            self.project = Project(datastore=datastore.project)
-            self.service = Service(datastore=datastore.service)
+            self.project = datastore.project
+            self.service = datastore.service
             self.content = datastore.content
             self.key = datastore.key()
         else:
             self.datastore = ProjectServiceData()
         if project is not None:
-            self.project = Project(datastore=project)
+            self.project = project
         if service is not None:
-            self.service = Service(datastore=service)
+            self.service = service
         if content is not None:
             self.content = content
         if key is not None:
@@ -64,8 +62,8 @@ class ProjectService():
         if self.datastore is None:
             raise ProjectServiceNotInstantiatedException
         else:
-            self.datastore.project = self.project.datastore
-            self.datastore.service = self.service.datastore
+            self.datastore.project = self.project
+            self.datastore.service = self.service
             self.datastore.content = self.content
             self.datastore.put()
 
@@ -83,8 +81,8 @@ class ProjectService():
                 raise ProjectServiceNotFoundException, self.key
             else:
                 self.datastore = datastore
-                self.project = Project(datastore=datastore.project)
-                self.service = Service(datastore=datastore.service)
+                self.project = datastore.project
+                self.service = datastore.service
                 self.content = datastore.content
 
     def delete(self):
@@ -106,8 +104,8 @@ class ProjectService():
 
         results = ProjectServiceData.all()
         if self.project is not None:
-            results.filter("project =", self.project.datastore)
+            results.filter("project =", self.project)
         if self.service is not None:
-            results.filter("service =", self.service.datastore)
+            results.filter("service =", self.service)
         results.fetch(1000)
         return results

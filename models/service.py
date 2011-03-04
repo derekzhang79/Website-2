@@ -10,10 +10,7 @@ import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 
 from datastore import ServiceData
-from errors.service import *
-from models.project import *
-from models.prject_service import *
-from errors.project_service import *
+from models.project_service import *
 
 class Service():
     """Defines datastore interactions for services on the site."""
@@ -127,7 +124,6 @@ class Service():
                 self.modified_on = datastore.modified_on
             self.projects = self.get_projects()
 
-
     def get_list(self):
         """Returns a Query object for up to 1,000 ServiceData objects."""
 
@@ -151,7 +147,7 @@ class Service():
             self.modified_on = None
             self.datastore = None
             
-            self.projects = None
+            self.projects = []
 
     def get_projects(self):
         """Retrieves all the ProjectData objects associated with this Service,

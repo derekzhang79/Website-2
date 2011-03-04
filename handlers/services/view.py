@@ -9,7 +9,7 @@
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 
-from models.service import Service
+from models.service import *
 from errors.service import *
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
@@ -34,15 +34,22 @@ class ViewServiceHandler(webapp.RequestHandler):
                     %s
                 </li>
             </ul>""" % (service.url, service.title, service.description)
-            sidebar = """<h2>Projects</h2>
-            <p>We've successfully performed this service in the following
-            projects:</p>
-            <ul>
-                <li><a href="/projects/tangles"
-                title="Tangl.es">Tangl.es</a></li>
-                <li><a href="/projects/test" title="Test Project">Test
-                Project</a></li>
-            </ul>"""
+            projects = ""
+            if service.projects is not None:
+                projects += "<ul>"
+                for project in service.projects:
+                    projects += "\n<li><a href=\"/projects/%s\" title=\"%s\">%s</a></li>" % (project.url, project.title, project.title)
+                projects += "\n</ul>"
+            if projects != "":
+                sidebar = """<h2>Projects</h2>
+                <p>We've successfully performed this service in the following
+                projects:</p>
+                %s""" % projects
+            else:
+                sidebar = """<h2>Be The First</h2>
+                <p>We don't have any projects (that we can talk about, at least)
+                that have used this service. Be the first kid on your block to
+                get that bragging right!"""
             title = "Services: %s" % service.title
             template_values = {
                 'header' : header,
