@@ -9,7 +9,8 @@
 import sys, os, logging
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 
-from models.project_service import *
+from models.service import Service
+from models.project import Project
 from models.image import Image
 from errors.service import *
 from google.appengine.ext import webapp, db
@@ -50,6 +51,21 @@ class AddEditServiceHandler(webapp.RequestHandler):
             if service.icon and tmp_image.shortname == service.icon.shortname:
                 icon_selected = " selected=\"selected\""
             image_string += "<option value=\"%s\"%s>%s</option>\n" % (tmp_image.key(), icon_selected, tmp_image.shortname)
+        projects = Project().get_list()
+        projects_string = ""
+        if projects is not None:
+            projects_string += """<label>Projects</label>
+            <select name="projects" multiple="multiple">"""
+            project_list = []
+            for project_service in service.projects:
+                project_list.append(project_service.project.key())
+            for project in projects:
+                selected = ""
+                projectkey = project.key()
+                if projectkey in project_list:
+                    selected = " selected=\"selected\""
+                projects_string += "\n<option value=\"%s\"%s>%s</option>" % (project.key(), selected, project.name)
+            projects_string += "</select><br />"
         content = """<h2>%s Service%s</h2>
             <p>
                 <form method="post">
@@ -69,9 +85,10 @@ class AddEditServiceHandler(webapp.RequestHandler):
                     </select><a href="/admin/images/add" title"Upload New
                     Icon">Add new image</a><br />
                     %s
+                    %s
                     <input type="submit">
                 </form>
-            <p>""" % (action, name, service.title, service.url, featured, service.description, service.excerpt, image_string, icon)
+            <p>""" % (action, name, service.title, service.url, featured, service.description, service.excerpt, image_string, icon, projects_string)
         sidebar = """<h2>Hints!</h2>
         <p>
             <b>Title</b>: The name of the service.<br />
@@ -109,6 +126,22 @@ class AddEditServiceHandler(webapp.RequestHandler):
         service.excerpt = self.request.POST['excerpt']
         service.url = self.request.POST['url']
         service.icon = db.Key(self.request.POST['icon'])
+        projects = self.request.get_all("projects")
+        project_list = []
+        for project_service in service.projects:
+            project_list.append(project_service.project.key())
+        for project in projects:
+            projectkey = db.Key(project)
+            if projectkey not in project_list:
+                service.add_project(db.Key(project))
+            else:
+                occurrences = range(0, project_list.count(projectkey))
+                logging.info(occurrences)
+                for instance in occurrences:
+                    project_list.remove(projectkey)
+        for deselected_project in project_list:
+            logging.info(deselected_project)
+            service.remove_project(deselected_project)
         try:
             featured = self.request.POST['featured']
         except KeyError:

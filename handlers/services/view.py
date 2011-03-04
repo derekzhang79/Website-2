@@ -38,9 +38,8 @@ class ViewServiceHandler(webapp.RequestHandler):
             if service.projects is not None:
                 projects += "<ul>"
                 for project in service.projects:
-                    projects += "\n<li><a href=\"/projects/%s\" title=\"%s\">%s</a></li>" % (project.url, project.title, project.title)
+                    projects += "\n<li><a href=\"/projects/%s\" title=\"%s\">%s</a></li>" % (project.project.url, project.project.name, project.project.name)
                 projects += "\n</ul>"
-            if projects != "":
                 sidebar = """<h2>Projects</h2>
                 <p>We've successfully performed this service in the following
                 projects:</p>

@@ -122,8 +122,8 @@ class Service():
                 self.featured = datastore.featured
                 self.modified_by = datastore.modified_by
                 self.modified_on = datastore.modified_on
-            self.projects = self.get_projects()
-
+                self.get_projects()
+    
     def get_list(self):
         """Returns a Query object for up to 1,000 ServiceData objects."""
 
