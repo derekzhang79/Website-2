@@ -2,7 +2,7 @@
 #
 #Authors:
 #   Paddy Foran <paddy@secondbit.org>
-#Last Modified: 2/26/11
+#Last Modified: 3/3/11
 #
 #Displays a page from the datastore when called
 
@@ -51,6 +51,15 @@ class ViewProjectHandler(webapp.RequestHandler):
                 erat vot lutpat."<br />
                 <em class="reviewer">- Person's Name</em>
             </p>""" % links_string
+            services = ""
+            if project.services is not None and project.services != []:
+                services += "<ul>"
+                for service in project.services:
+                    services += "\n<li><a href=\"/services/%s\" title=\"%s\">%s</a></li>" % (service.service.url, service.service.title, service.service.title)
+                services += "\n</ul>"
+                sidebar += """<h2>Services</h2>
+                <p>This project used the following services that we offer:</p>
+                %s""" % services
             images = db.get(project.images)
             images_string = ""
             count = 1

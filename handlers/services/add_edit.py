@@ -2,7 +2,7 @@
 #
 #Authors:
 #   Paddy Foran <paddy@secondbit.org>
-#Last Modified: 3/1/11
+#Last Modified: 3/3/11
 #
 #Handles requests to add or edit a service.
 
@@ -64,7 +64,7 @@ class AddEditServiceHandler(webapp.RequestHandler):
                 projectkey = project.key()
                 if projectkey in project_list:
                     selected = " selected=\"selected\""
-                projects_string += "\n<option value=\"%s\"%s>%s</option>" % (project.key(), selected, project.name)
+                projects_string += "\n<option value=\"%s\"%s>%s</option>" % (projectkey, selected, project.name)
             projects_string += "</select><br />"
         content = """<h2>%s Service%s</h2>
             <p>
@@ -126,6 +126,15 @@ class AddEditServiceHandler(webapp.RequestHandler):
         service.excerpt = self.request.POST['excerpt']
         service.url = self.request.POST['url']
         service.icon = db.Key(self.request.POST['icon'])
+        try:
+            featured = self.request.POST['featured']
+        except KeyError:
+            featured = "False"
+        if featured == "True":
+            service.featured = True
+        else:
+            service.featured = False
+        service.save()
         projects = self.request.get_all("projects")
         project_list = []
         for project_service in service.projects:
@@ -142,15 +151,6 @@ class AddEditServiceHandler(webapp.RequestHandler):
         for deselected_project in project_list:
             logging.info(deselected_project)
             service.remove_project(deselected_project)
-        try:
-            featured = self.request.POST['featured']
-        except KeyError:
-            featured = "False"
-        if featured == "True":
-            service.featured = True
-        else:
-            service.featured = False
-        service.save()
         self.redirect("/services/%s" % service.url)
 
 application = webapp.WSGIApplication([

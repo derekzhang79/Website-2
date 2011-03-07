@@ -11,6 +11,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 
 from datastore import ServiceData
 from models.project_service import *
+from errors.service import *
 
 class Service():
     """Defines datastore interactions for services on the site."""
@@ -128,6 +129,12 @@ class Service():
         """Returns a Query object for up to 1,000 ServiceData objects."""
 
         return ServiceData.all().order("-modified_on").fetch(1000)
+
+    def get_featured(self):
+        """Returns a Query object for up to 1,000 ServiceData objects. Returns
+        only ServiceData objects that have featured as True."""
+
+        return ServiceData.all().filter("featured =", True).fetch(1000)
 
     def delete(self):
         """Removes self.datastore from the datastore. Throws a
