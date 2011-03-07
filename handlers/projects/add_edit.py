@@ -205,6 +205,8 @@ class AddEditProjectHandler(webapp.RequestHandler):
         except ImageNotFoundError:
             pass
         else:
+            if screenshot.width > 314 or screenshot.height > 160:
+                screenshot.resize(width=314, height=160)
             project.screenshot = screenshot.datastore
         try:
             icon = Image(shortname=self.request.POST['icon'])
