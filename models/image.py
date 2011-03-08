@@ -185,6 +185,6 @@ class Image():
       self.image = image.execute_transforms()
       self.height = height
       self.width = width
-      self.shortname = "%s_%sx%s" % (self.shortname, width, height)
+      self.shortname = "%s-%sx%s" % (self.shortname, width, height)
       self.datastore = ImageData(mimetype=self.mimetype)
       self.save()
