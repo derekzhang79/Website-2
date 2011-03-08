@@ -142,12 +142,11 @@ class Image():
 
         return ImageData.all().order("-uploaded_on").fetch(1000)
 
-    def rescale(img_data, width, height, halign='middle', valign='middle'):
+    def rescale(self, width, height, halign='middle', valign='middle'):
       """Resize then optionally crop a given image. Pulled straight from
       StackOverflow, needs some editing.
 
       Attributes:
-        img_data: The image data
         width: The desired width
         height: The desired height
         halign: Acts like photoshop's 'Canvas Size' function, horizontally
@@ -155,7 +154,7 @@ class Image():
         valign: Verticallly aligns the crop to top, middle or bottom
     
       """
-      image = images.Image(img_data)
+      image = images.Image(self.image)
 
       desired_wh_ratio = float(width) / float(height)
       wh_ratio = float(image.width) / float(image.height)
@@ -183,4 +182,9 @@ class Image():
         else:
           image.crop(trim_x, 0.0, 1 - trim_x, 1.0)
     
-      return image.execute_transforms()
+      self.image = image.execute_transforms()
+      self.height = height
+      self.width = width
+      self.shortname = "%s_%sx%s" % (self.shortname, width, height)
+      self.datastore = ImageData(mimetype=self.mimetype)
+      self.save()
