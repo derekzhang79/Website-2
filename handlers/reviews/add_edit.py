@@ -46,7 +46,7 @@ class AddEditReviewHandler(webapp.RequestHandler):
         projects = project.get_list()
         for project in projects:
             selected = ""
-            if project.key() == review.project.key():
+            if review.project != "" and project.key() == review.project.key():
                 selected = " selected=\"selected\""
             projects_string += "\n<option value=\"%s\"%s>%s</option>" % (project.key(), selected, project.name)
         content = """<h2>%s Review%s</h2>
@@ -65,9 +65,9 @@ class AddEditReviewHandler(webapp.RequestHandler):
                 <label>Content</label>
                 <textarea name="content">%s</textarea><br />
                 <label>Project</label>
-                <select name="project">%s</select>
+                <select name="project">%s</select><br />
                 <label>Date</label>
-                <input type="text" value="%s" /><br />
+                <input type="text" value="%s" name="date" /><br />
                 <label>Featured?</label>
                 <input type="checkbox" name="featured" value="True"%s /><br />
                 <input type="submit">
@@ -94,21 +94,29 @@ class AddEditReviewHandler(webapp.RequestHandler):
         path = os.path.join(os.path.dirname(__file__), "../../template/hauk", 'secondary.html')
         self.response.out.write(template.render(path, template_values))
             
-    def post(self, key=None):
-        link = Link()
-        if key is not None:
-            link.key = key
-            link.get()
-        link.name = self.request.POST['name']
-        link.title = self.request.POST['title']
-        link.url = self.request.POST['url']
-        link.weight = self.request.POST['weight']
-        link.group = self.request.POST['group']
-        link.save()
-        self.redirect("/admin/links")
+    def post(self, url=None):
+        review = Review()
+        if url is not None:
+            review.url = url
+            review.get()
+        review.author = self.request.POST['author']
+        review.publication = self.request.POST['publication']
+        review.reference = self.request.POST['reference']
+        review.url = self.request.POST['url']
+        review.excerpt = self.request.POST['excerpt']
+        review.content = self.request.POST['content']
+        review.project = self.request.POST['project']
+        review.date = self.request.POST['date']
+        review.featured = self.request.POST['featured']
+        if review.featured == "True":
+            review.featured = True
+        else:
+            review.featured = False
+        review.save()
+        self.redirect("/review/%s" % review.url)
 
 application = webapp.WSGIApplication([
-                                ('/admin/reviewss/add', AddEditReviewHandler),
+                                ('/admin/reviews/add', AddEditReviewHandler),
                                 ('/admin/reviews/edit/(.*)', AddEditReviewHandler),
                                 ('/admin/reviews/add/', AddEditReviewHandler)
                                 ], debug=True)

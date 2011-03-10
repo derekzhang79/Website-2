@@ -9,6 +9,7 @@
 import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 
+from google.appengine.ext import db
 from datastore import ReviewData
 #from errors.page import *
 
@@ -113,7 +114,7 @@ class Review():
             self.datastore.url = self.url
             self.datastore.excerpt = self.excerpt
             self.datastore.content = self.content
-            self.datastore.project = self.project
+            self.datastore.project = db.Key(self.project)
             self.datastore.date = self.date
             self.datastore.featured = self.featured
             self.datastore.put()
