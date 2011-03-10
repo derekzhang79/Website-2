@@ -108,9 +108,9 @@ class AddEditReviewHandler(webapp.RequestHandler):
         self.redirect("/admin/links")
 
 application = webapp.WSGIApplication([
-                                ('/admin/links/add', AddEditLinkHandler),
-                                ('/admin/links/edit/(.*)', AddEditLinkHandler),
-                                ('/admin/links/add/', AddEditLinkHandler)
+                                ('/admin/reviewss/add', AddEditReviewHandler),
+                                ('/admin/reviews/edit/(.*)', AddEditReviewHandler),
+                                ('/admin/reviews/add/', AddEditReviewHandler)
                                 ], debug=True)
 
 def main():

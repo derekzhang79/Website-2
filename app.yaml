@@ -68,6 +68,9 @@ handlers:
   script: handlers/services/images.py
 - url: /services/.*
   script: handlers/services/view.py
+- url: /admin/reviews/(add|edit).*
+  script: handlers/reviews/add_edit.py
+  login: admin
 - url: /images
   static_dir: template/hauk/images
 - url: /favicon.ico
