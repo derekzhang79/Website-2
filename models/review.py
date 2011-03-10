@@ -119,39 +119,53 @@ class Review():
         self.url is None."""
 
         if self.url is None:
-            raise PageNotInstantiatedException
+            raise ReviewNotInstantiatedException
         else:
-            datastore = PageData.all().filter("url =", self.url).get()
+            datastore = ReviewData.all().filter("url =", self.url).get()
             if datastore is None:
-                raise PageNotFoundException, self.url
+                raise ReviewNotFoundException, self.url
             else:
                 self.datastore = datastore
-                self.title = datastore.title
-                self.content = datastore.content
+                self.author = datastore.author
+                self.publication = datastore.publication
                 self.url = datastore.url
-                self.sidebar = datastore.sidebar
-                self.is_public = datastore.is_public
+                self.reference = datastore.reference
+                self.excerpt = datastore.excerpt
+                self.project = datastore.project
+                self.date = datastore.date
+                self.featured = datastore.featured
                 self.modified_on = datastore.modified_on
                 self.modified_by = datastore.modified_by
 
     def get_list(self):
         """Returns a Query object for up to 1,000 PageData objects."""
 
-        return PageData.all().order("-modified_on").fetch(1000)
+        return ReviewData.all().order("-modified_on").fetch(1000)
+
+    def get_for_project(self):
+        """Returns a Query object for up to 1,000 ReviewData objects that share
+        a ProjectData value with self.project."""
+        
+        if self.project is None:
+            raise ReviewNotInstantiatedException
+        return ReviewData.all().filter("project =", self.project).order("-date").fetch(1000)
 
     def delete(self):
         """Removes self.datastore from the datastore. Throws a
         PageNotInstantiatedException if self.datastore is None."""
 
         if self.datastore is None:
-            raise PageNotInstantiatedException
+            raise ReviewNotInstantiatedException
         else:
             self.datastore.delete()
             self.datastore = None
-            self.title = None
-            self.content = None
+            self.author = None
+            self.publication = None
             self.url = None
-            self.sidebar = None
-            self.is_public = None
+            self.reference = None
+            self.excerpt = None
+            self.project = None
+            self.date = None
+            self.featured = None
             self.modified_on = None
             self.modified_by = None
