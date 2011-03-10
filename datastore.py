@@ -11,7 +11,7 @@ from google.appengine.ext import db
 class ImageData(db.Model):
     image = db.BlobProperty()
     original = db.SelfReferenceProperty(collection_name='sizes', required=False)
-    mimetype = db.StringProperty(required=True, multiline=False)
+    mimetype = db.StringProperty(required=False, multiline=False)
     shortname = db.StringProperty(multiline=False)
     uploaded_by = db.UserProperty(auto_current_user=True)
     uploaded_on = db.DateTimeProperty(auto_now=True)
@@ -68,7 +68,7 @@ class ProjectServiceData(db.Model):
 
 class UploadData(db.Model):
     upload = db.Blob()
-    mimetype = db.StringProperty(required=True, multiline=False)
+    mimetype = db.StringProperty(required=False, multiline=False)
     shortname = db.StringProperty(multiline=False)
     uploaded_by = db.UserProperty(auto_current_user=True)
     uploaded_on = db.DateTimeProperty(auto_now=True)
@@ -77,9 +77,10 @@ class ReviewData(db.Model):
     author = db.StringProperty(multiline=False, required=False)
     publication = db.StringProperty(multiline=False, required=False)
     reference = db.StringProperty(multiline=False, required=False)
-    url = db.StringProperty(multiline=False, required=True)
+    url = db.StringProperty(multiline=False, required=False)
+    content = db.TextProperty()
     excerpt = db.StringProperty(multiline=True)
-    project = db.ReferenceProperty(ProjectData, collection_name='reviews', required=True)
+    project = db.ReferenceProperty(ProjectData, collection_name='reviews', required=False)
     date = db.DateTimeProperty()
     featured = db.BooleanProperty()
     modified_by = db.UserProperty(auto_current_user=True)

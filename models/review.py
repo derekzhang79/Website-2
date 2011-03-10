@@ -21,6 +21,7 @@ class Review():
     reference = None
     url = None
     excerpt = None
+    content = None
     project = None
     date = None
     featured = None
@@ -28,7 +29,7 @@ class Review():
     modified_on = None
     datastore = None
 
-    def __init__(self, datastore=None, author=None, publication=None, reference=None, url=None, excerpt=None, project=None, date=None, featured=None):
+    def __init__(self, datastore=None, author=None, publication=None, reference=None, url=None, excerpt=None, content=None, project=None, date=None, featured=None):
         """Defines the initialization method for a Page object. Accepts the
         datastore (an instance of a PageData object), the title of the page,
         the content of the page as HTML, the sidebar of the page as HTML, the
@@ -41,6 +42,7 @@ class Review():
     	self.reference = None
     	self.url = None
     	self.excerpt = None
+        self.content = None
     	self.project = None
     	self.date = None
     	self.featured = None
@@ -55,6 +57,7 @@ class Review():
     	    self.reference = datastore.reference
     	    self.url = datastore.url
     	    self.excerpt = datastore.excerpt
+            self.content = datastore.content
     	    self.project = datastore.project
     	    self.date = datastore.date
             self.featured = datastore.featured
@@ -79,6 +82,8 @@ class Review():
             self.date = date
         if featured is not None:
             self.featured = featured
+        if content is not None:
+            self.content = content
 
     def save(self):
         """Writes the current instance of Page to the datastore as a PageData
@@ -94,19 +99,20 @@ class Review():
         else:
             if self.url and self.url != self.datastore.url:
                 try:
-                    duplicate = Page(url=self.url)
+                    duplicate = Review(url=self.url)
                     duplicate.get()
-                except PageNotFoundException:
+                except ReviewNotFoundException:
                     pass
                 else:
-                    raise PageURLTakenException, self.url
+                    raise ReviewURLTakenException, self.url
             else:
-                raise PageNotInstantiatedException
+                raise ReviewNotInstantiatedException
             self.datastore.author = self.author
             self.datastore.publication = self.publication
             self.datastore.reference = self.reference
             self.datastore.url = self.url
             self.datastore.excerpt = self.excerpt
+            self.datastore.content = self.content
             self.datastore.project = self.project
             self.datastore.date = self.date
             self.datastore.featured = self.featured
@@ -131,6 +137,7 @@ class Review():
                 self.url = datastore.url
                 self.reference = datastore.reference
                 self.excerpt = datastore.excerpt
+                self.content = datastore.content
                 self.project = datastore.project
                 self.date = datastore.date
                 self.featured = datastore.featured
@@ -164,6 +171,7 @@ class Review():
             self.url = None
             self.reference = None
             self.excerpt = None
+            self.content = None
             self.project = None
             self.date = None
             self.featured = None
