@@ -11,7 +11,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 
 from google.appengine.ext import db
 from datastore import ReviewData
-#from errors.page import *
+from errors.review import *
 
 class Review():
     """Defines datastore interactions for reviews on the site."""

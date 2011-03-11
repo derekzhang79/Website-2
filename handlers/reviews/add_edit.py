@@ -9,9 +9,11 @@
 import sys, os, logging
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 
+from datetime import datetime
+
 from models.review import Review
-from models.link import Link
 from models.project import Project
+from errors.review import *
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
@@ -42,6 +44,7 @@ class AddEditReviewHandler(webapp.RequestHandler):
             projects_string = ""
             action = "Edit"
             name = " '%s'" % review.url
+            review.date = review.date.strftime("%m/%d/%Y %H:%M")
         project = Project()
         projects = project.get_list()
         for project in projects:
@@ -107,6 +110,7 @@ class AddEditReviewHandler(webapp.RequestHandler):
         review.content = self.request.POST['content']
         review.project = self.request.POST['project']
         review.date = self.request.POST['date']
+        review.date = datetime.strptime(review.date, "%m/%d/%Y %H:%M")
         review.featured = self.request.POST['featured']
         if review.featured == "True":
             review.featured = True
