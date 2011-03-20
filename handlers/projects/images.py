@@ -45,7 +45,7 @@ class ProjectThumbHandler(webapp.RequestHandler):
             thumb.get()
         except ImageNotFoundException:
             if image.width != 166:
-                image.resize(height=height, width=166)
+                image.rescale(height=height, width=166, crop=True)
             thumb = image
         self.response.headers['Content-Type'] = thumb.mimetype
         self.response.out.write(thumb.image)

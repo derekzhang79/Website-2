@@ -60,14 +60,25 @@ handlers:
 - url: /admin/services/
   script: handlers/services/list.py
   login: admin
+- url: /admin/people/(add|edit).*
+  script: handlers/people/add_edit.py
+  login: admin
 - url: /projects/[^/]*/(image|thumb)/.*
   script: handlers/projects/images.py
+- url: /projects/[^/]*/reviews/.*
+  script: /handlers/reviews/view.py
 - url: /projects/.*
   script: handlers/projects/view.py
 - url: /services/[^/]*/icon
   script: handlers/services/images.py
 - url: /services/.*
   script: handlers/services/view.py
+- url: /admin/reviews
+  script: handlers/reviews/list.py
+  login: admin
+- url: /admin/reviews/
+  script: handlers/reviews/list.py
+  login: admin
 - url: /admin/reviews/(add|edit).*
   script: handlers/reviews/add_edit.py
   login: admin

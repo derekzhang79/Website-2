@@ -223,7 +223,7 @@ class AddEditProjectHandler(webapp.RequestHandler):
             pass
         else:
             if screenshot.width > 314 or screenshot.height > 160:
-                screenshot.resize(width=314, height=160)
+                screenshot.rescale(width=314, height=160, crop=True)
             project.screenshot = screenshot.datastore
         try:
             icon = Image(shortname=self.request.POST['icon'])

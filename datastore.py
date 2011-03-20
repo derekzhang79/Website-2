@@ -88,6 +88,7 @@ class ReviewData(db.Model):
 
 class PersonData(db.Model):
     avatar = db.ReferenceProperty(ImageData)
+    avatar_thumb = db.ReferenceProperty(ImageData, collection_name="peoplethumbs")
     name = db.StringProperty(multiline=False)
     role = db.StringProperty(multiline=False)
     featured = db.BooleanProperty()

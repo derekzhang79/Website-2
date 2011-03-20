@@ -4,6 +4,7 @@ from google.appengine.ext.webapp import util, template
 
 from models.service import Service
 from models.project import Project
+from models.person import Person
 from models.link import Link
 
 class MainHandler(webapp.RequestHandler):
@@ -14,9 +15,12 @@ class MainHandler(webapp.RequestHandler):
         projects = project_model.get_featured()
         menu_model = Link(group="special_menu")
         menu_links = menu_model.get_group()
+        person = Person()
+        people = person.get_featured()
         template_values = {
             'services' : services,
             'projects' : projects,
+            'people' : people,
             'menu' : menu_links
         }
         path = os.path.join(os.path.dirname(__file__), 'template/hauk', 'index.html')

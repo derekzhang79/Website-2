@@ -27,6 +27,8 @@ class ResizeImageHandler(webapp.RequestHandler):
                     <input type="text" value="%s" name="width" /><br />
                     <label>Height</label>
                     <input type="text" value="%s" name="height" /><br />
+                    <label>Crop?</label>
+                    <input type="checkbox" value="True" name="crop" /><br />
                     <input type="submit" />
                 </form>
             </p>""" % (image.shortname, image.shortname, image.width, image.height)
@@ -53,7 +55,8 @@ class ResizeImageHandler(webapp.RequestHandler):
         image.get()
         height = int(self.request.get("height"))
         width = int(self.request.get("width"))
-        image.resize(height=height, width=width)
+        crop = self.request.get("crop") == "True"
+        image.rescale(height=height, width=width, crop=crop)
         self.redirect("/image/%s" % image.shortname)
 
 application = webapp.WSGIApplication([

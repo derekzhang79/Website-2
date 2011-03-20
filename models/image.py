@@ -118,31 +118,31 @@ class Image():
                 self.height = datastore.height
                 self.width = datastore.width
 
-    def resize(self, height=0, width=0):
-        """Resizes the current instance of Image to height and width. Saves
-        result as a new ImageData instance, and populates self with it. Throws
-        an ImageNotInstantiatedException if self.image or self.datastore is
-        None."""
-
-        if self.datastore is None or self.image is None:
-            raise ImageNotInstantiatedException
-        else:
-            self.original = self.datastore
-            self.datastore = ImageData(mimetype=self.mimetype)
-            self.image = images.resize(self.image, height=height, width=width)
-            self.uploaded_by = users.get_current_user()
-            self.uploaded_on = datetime.datetime.today()
-            self.height = height
-            self.width = width
-            self.shortname = "%s_%sx%s" % (self.shortname, self.width, self.height)
-            self.save()
+#    def resize(self, height=0, width=0):
+#        """Resizes the current instance of Image to height and width. Saves
+#        result as a new ImageData instance, and populates self with it. Throws
+#        an ImageNotInstantiatedException if self.image or self.datastore is
+#        None."""
+#
+#        if self.datastore is None or self.image is None:
+#            raise ImageNotInstantiatedException
+#        else:
+#            self.original = self.datastore
+#            self.datastore = ImageData(mimetype=self.mimetype)
+#            self.image = images.resize(self.image, height=height, width=width)
+#            self.uploaded_by = users.get_current_user()
+#            self.uploaded_on = datetime.datetime.today()
+#            self.height = height
+#            self.width = width
+#            self.shortname = "%s_%sx%s" % (self.shortname, self.width, self.height)
+#            self.save()
 
     def get_list(self):
         """Returns a Query object for up to 1,000 ImageData objects."""
 
         return ImageData.all().order("-uploaded_on").fetch(1000)
 
-    def rescale(self, width, height, halign='middle', valign='middle'):
+    def rescale(self, width, height, halign='left', valign='top', crop=True):
       """Resize then optionally crop a given image. Pulled straight from
       StackOverflow, needs some editing.
 
@@ -152,6 +152,7 @@ class Image():
         halign: Acts like photoshop's 'Canvas Size' function, horizontally
                 aligning the crop to left, middle or right
         valign: Verticallly aligns the crop to top, middle or bottom
+        crop: Whether the image should be cropped or just resized
     
       """
       image = images.Image(self.image)
@@ -163,28 +164,31 @@ class Image():
         # resize to width, then crop to height
         image.resize(width=width)
         image.execute_transforms()
-        trim_y = (float(image.height - height) / 2) / image.height
-        if valign == 'top':
-          image.crop(0.0, 0.0, 1.0, 1 - (2 * trim_y))
-        elif valign == 'bottom':
-          image.crop(0.0, (2 * trim_y), 1.0, 1.0)
-        else:
-          image.crop(0.0, trim_y, 1.0, 1 - trim_y)
+        if crop:
+            trim_y = (float(image.height - height) / 2) / image.height
+            if valign == 'top':
+                image.crop(0.0, 0.0, 1.0, 1 - (2 * trim_y))
+            elif valign == 'bottom':
+                image.crop(0.0, (2 * trim_y), 1.0, 1.0)
+            else:
+                image.crop(0.0, trim_y, 1.0, 1 - trim_y)
       else:
         # resize to height, then crop to width
         image.resize(height=height)
         image.execute_transforms()
-        trim_x = (float(image.width - width) / 2) / image.width
-        if halign == 'left':
-          image.crop(0.0, 0.0, 1 - (2 * trim_x), 1.0)
-        elif halign == 'right':
-          image.crop((2 * trim_x), 0.0, 1.0, 1.0)
-        else:
-          image.crop(trim_x, 0.0, 1 - trim_x, 1.0)
+        if crop:
+            trim_x = (float(image.width - width) / 2) / image.width
+            if halign == 'left':
+                image.crop(0.0, 0.0, 1 - (2 * trim_x), 1.0)
+            elif halign == 'right':
+                image.crop((2 * trim_x), 0.0, 1.0, 1.0)
+            else:
+                image.crop(trim_x, 0.0, 1 - trim_x, 1.0)
     
       self.image = image.execute_transforms()
-      self.height = height
-      self.width = width
-      self.shortname = "%s-%sx%s" % (self.shortname, width, height)
+      self.height = image.height
+      self.width = image.width
+      self.shortname = "%s-%sx%s" % (self.shortname, image.width, image.height)
       self.datastore = ImageData(mimetype=self.mimetype)
       self.save()
+      return self.datastore
