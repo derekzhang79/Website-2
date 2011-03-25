@@ -92,10 +92,12 @@ class AddEditPersonHandler(webapp.RequestHandler):
                 <b>Group:</b> The 'group' the link is part of. Could be
                     'special_menu' or 'project_android2cloud'.
             </p>"""
+        people = person.get_featured()
         template_values = {
             'content' : content,
             'title' : '%s %s' % (action, name),
-            'sidebar': sidebar
+            'sidebar': sidebar,
+            'people' : people
         }
         path = os.path.join(os.path.dirname(__file__), "../../template/hauk", 'secondary.html')
         self.response.out.write(template.render(path, template_values))

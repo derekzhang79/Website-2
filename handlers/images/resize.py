@@ -11,6 +11,7 @@ import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 
 from models.image import Image
+from models.person import Person
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
@@ -42,10 +43,13 @@ class ResizeImageHandler(webapp.RequestHandler):
         crop. It will use whichever will result in a <u>smaller</u> image, of
         the height and width. A new <u>copy</u> of the image will be created as
         shortname_widthxheight, using the values you enter.</i></p>"""
+        person = Person()
+        people = person.get_featured()
         template_values = {
             'content' : content,
             'title' : 'Resize Image "%s"' % image.shortname,
-            'sidebar' : sidebar
+            'sidebar' : sidebar,
+            'people' : people
         }
         path = os.path.join(os.path.dirname(__file__), '../../template/hauk', 'secondary.html')
         self.response.out.write(template.render(path, template_values))

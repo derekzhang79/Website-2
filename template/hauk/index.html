@@ -82,8 +82,8 @@
 		<div id="subheader">
 			<div id="subheader-inner" class="inner-container home-featured">
 				<div style="padding: 0px; margin: 0px;">
-					<h2 id="project-name"></h2>
-					<p class="featured-text" id="project-excerpt"></p>
+					<h2 id="project-name">{{ projects.0.name }}</h2>
+					<p class="featured-text" id="project-excerpt">{{ projects.0.excerpt }}</p>
 		
 					<div class="featured-image">
 						{% for project in projects %}
@@ -91,8 +91,12 @@
 						{% endfor %}
 					</div> <!-- .featured-image -->
 
-					<a href="#" class="featured-btn view-project" id="project-button" style="position: absolute; bottom: -20px;">View Project</a>
-					<a href="#" class="featured-btn" id="project-link" style="position: absolute; bottom: -20px; left: 150px;"></a>
+					<a href="/projects/{{ projects.0.url }}" class="featured-btn view-project" id="project-button" style="position: absolute; bottom: -20px;">View Project</a>
+					{% if projects.0.featured_link %}
+					<a href="{{ projects.0.featured_link.url }}" class="featured-btn" id="project-link" style="position: absolute; bottom: -20px; left: 150px;" title="{{ projects.0.featured_link.title }}">{{ projects.0.featured_link.name }}</a>
+					{% else %}
+					<a href="#" class="featured-btn" id="project-link" style="position: absolute; bottom: -20px; left: 150px; display: none;"></a>
+					{% endif %}
 				</div>
 
 				<!--<div style="padding: 0px; margin:0px;">
@@ -115,7 +119,7 @@
 		<div id="main-content">
 			<div id="main-content-inner" class="inner-container">
 				<h2>Here's what we do.</h2>
-				<p>With a list of services this long, I'm sure there's something we can help you with. <a href="#">Find out more about us</a>.</p>
+				<p>With a list of services this long, I'm sure there's something we can help you with. <a href="/services">And this isn't all we do</a>.</p>
 	
 				<ul id="services"><!--
 					<li class="mobile onethird">
@@ -149,7 +153,7 @@
 						</li>-->
 					{% for service in services %}
 					<li class="service-icon-{{ service.url }} onethird {% cycle thirds-left,thirds-middle,thirds-right %}">
-						<h3>{{ service.title }}</h3>
+					<h3><a href="/services/{{ service.url }}" title="More information about {{ service.title }}">{{ service.title }}</a></h3>
 						<p>{{ service.excerpt }}</p>
 					</li>
 					{% endfor %}
@@ -163,7 +167,7 @@
 				<div class="twothirds">
 					<h4>A bit about us</h4>
 					<p class="about-footer">Second Bit, LLC was founded in the Fall of 2010 with the central guiding goal of "let's make cool stuff". Since then, we've released products that have reached thousands of people and been covered by publications from the niche to the well-known. We believe in open source, freely available software, and work hard to Do The Right Thing.<br />
-					<a href="#">Learn more</a>.</p>
+					<a href="/about">Learn more</a>.</p>
 				</div> <!-- .twothirds -->
 			
 				<div class="onethird">
@@ -171,7 +175,7 @@
 				
 					{% for person in people %}<p class="team-footer">
 						<img src="/image/{{ person.avatar_thumb.shortname }}" alt="{{ person.name }}" />
-						{{ person.name }}
+						<a style="color: #60727E;" href="/team/{{ person.url }}" title="{{ person.name }}'s Profile">{{ person.name }}</a>
 						<span>{{ person.role }}</span>
 					</p>{% endfor %}
 				</div> <!-- .onethird -->

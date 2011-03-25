@@ -76,17 +76,12 @@
 	
 				<div class="onethird">
 					<h4>Meet the Team</h4>
-					<p class="team-footer">
-						<img src="/images/default-pic-small.png" alt="Paddy Foran" />
-						Paddy Foran
-						<span>CEO</span>
-					</p>
-	
-					<p class="team-footer">
-						<img src="/images/default-pic-small.png" alt="Tino Galizio" />
-						Tino Galizio
-						<span>CFO</span>
-					</p>
+				
+					{% for person in people %}<p class="team-footer">
+						<img src="/image/{{ person.avatar_thumb.shortname }}" alt="{{ person.name }}" />
+						<a style="color: #60727E;" href="/team/{{ person.url }}" title="{{ person.name }}'s Profile">{{ person.name }}</a>
+						<span>{{ person.role }}</span>
+					</p>{% endfor %}
 				</div> <!-- .onethird -->
 	
 				<div id="copyright">

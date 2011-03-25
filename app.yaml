@@ -65,12 +65,30 @@ handlers:
   login: admin
 - url: /projects/[^/]*/(image|thumb)/.*
   script: handlers/projects/images.py
+- url: /projects/[^/]*/reviews
+  script: handlers/reviews/view_project.py
+- url: /projects/[^/]*/reviews/
+  script: handlers/reviews/view_project.py
 - url: /projects/[^/]*/reviews/.*
   script: /handlers/reviews/view.py
+- url: /projects
+  script: /handlers/projects/view_all.py
+- url: /projects/
+  script: /handlers/projects/view_all.py
 - url: /projects/.*
   script: handlers/projects/view.py
 - url: /services/[^/]*/icon
   script: handlers/services/images.py
+- url: /team
+  script: handlers/people/view_all.py
+- url: /team/
+  script: handlers/people/view_all.py
+- url: /team/.*
+  script: handlers/people/view.py
+- url: /services
+  script: handlers/services/view_all.py
+- url: /services/
+  script: handlers/services/view_all.py
 - url: /services/.*
   script: handlers/services/view.py
 - url: /admin/reviews

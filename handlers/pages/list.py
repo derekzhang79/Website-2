@@ -10,6 +10,7 @@ import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 
 from models.page import Page
+from models.person import Person
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
@@ -46,10 +47,13 @@ class ListPagesHandler(webapp.RequestHandler):
         <p>You can edit and delete the pages in the datastore by clicking the
         appropriate link. You can also <a href="/admin/pages/add" title="Add a
         page">add a page</a> to the datastore.</p>"""
+        person = Person()
+        people = person.get_featured()
         template_values = {
             'content' : content,
             'sidebar' : sidebar,
-            'title' : "Pages"
+            'title' : "Pages",
+            'peeople' : people
         }
         path = os.path.join(os.path.dirname(__file__), "../../template/hauk", "secondary.html")
         self.response.out.write(template.render(path, template_values))

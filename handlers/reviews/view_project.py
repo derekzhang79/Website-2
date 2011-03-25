@@ -1,4 +1,4 @@
-#/handlers/reviews/view.py
+#/handlers/reviews/view_project.py
 #
 #Authors:
 #   Paddy Foran <paddy@secondbit.org>
@@ -10,37 +10,38 @@ import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 
 from models.review import Review
-from errors.review import ReviewNotFoundException
+from models.project import Project
+from errors.project import ProjectNotFoundException
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api import users
 
-class ViewReviewHandler(webapp.RequestHandler):
-    def get(self, project, url):
-        url = url.strip().strip("/")
-        review = Review(url=url)
+class ViewProjectReviewsHandler(webapp.RequestHandler):
+    def get(self, project_url):
+        project = Project(url=project_url)
         try:
-            review.get()
-        except ReviewNotFoundException:
+            project.get()
+        except ProjectNotFoundException:
             self.response.out.write("404")
         else:
-            content = "<h2>Review of %s from %s</h2>\n" % (review.project.name, review.publication)
-            sidebar = "<h2>Reviews of %s</h2>" % review.project.name
-            sidebar += "\n\t<ul>"
+            review = Review(project=project.datastore)
+            content = ""
             reviews = review.get_for_project()
-            for other_review in reviews:
-                sidebar += "\n\t\t<li><a href=\"/projects/%s/reviews/%s\" title=\"Review of %s from %s\">%s</a></li>" % (other_review.project.url, other_review.url, other_review.project.name, other_review.publication, other_review.publication)
+            for review in reviews:
+                content += "\n\t\t<h2><a href=\"/projects/%s/reviews/%s\" title=\"Review of %s from %s\">%s</a></h2>" % (review.project.url, review.url, review.project.name, review.publication, review.publication)
+                content += "\n\t\t<p>%s</p>" % review.excerpt
             template_values = {
-                'content' : "%s%s" % (content, review.content),
+                'content' : content,
                 'title' : "Look at the nice things people are saying",
-                'sidebar' : sidebar
+                'sidebar' : "<h2>This is a sidebar and shit.</h2><p>Srsly.</p>"
             }
             path = os.path.join(os.path.dirname(__file__), '../../template/hauk', 'secondary.html')
             self.response.out.write(template.render(path, template_values))
 
 application = webapp.WSGIApplication([
-    ('/projects/([^/]*)/reviews/(.*)', ViewReviewHandler)
+    ('/projects/([^/]*)/reviews/', ViewProjectReviewsHandler),
+    ('/projects/([^/]*)/reviews', ViewProjectReviewsHandler)
 ], debug=True)
 
 def main():

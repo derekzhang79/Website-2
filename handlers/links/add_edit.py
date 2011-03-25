@@ -10,6 +10,7 @@ import sys, os, logging
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 
 from models.link import Link
+from models.person import Person
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
@@ -57,10 +58,13 @@ class AddEditLinkHandler(webapp.RequestHandler):
                 <b>Group:</b> The 'group' the link is part of. Could be
                     'special_menu' or 'project_android2cloud'.
             </p>"""
+        person = Person()
+        people = person.get_featured()
         template_values = {
             'content' : '<h2>%s Link%s</h2><div>%s</div>' % (action, name, content),
             'title' : '%s Link%s' % (action, name),
-            'sidebar': sidebar
+            'sidebar': sidebar,
+            'people' : people
         }
         path = os.path.join(os.path.dirname(__file__), "../../template/hauk", 'secondary.html')
         self.response.out.write(template.render(path, template_values))

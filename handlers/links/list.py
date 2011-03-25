@@ -10,6 +10,7 @@ import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 
 from models.link import Link
+from models.person import Person
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
@@ -43,10 +44,13 @@ class ListLinksHandler(webapp.RequestHandler):
         <p>You can edit, delete, and reorder the links in the datastore by
         clicking the appropriate link. You can also <a href="/admin/links/add"
         title="Add a link">add a link</a> to the datastore.</p>"""
+        person = Person()
+        people = person.get_featured()
         template_values = {
             'content' : content,
             'sidebar' : sidebar,
-            'title' : "Links"
+            'title' : "Links",
+            'people' : people
         }
         path = os.path.join(os.path.dirname(__file__), "../../template/hauk", 'secondary.html')
         self.response.out.write(template.render(path, template_values))

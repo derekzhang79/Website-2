@@ -12,6 +12,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 from models.project import Project
 from errors.project import ProjectNotFoundException
 from models.link import Link
+from models.review import Review
 from google.appengine.ext import webapp, db
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
@@ -20,8 +21,6 @@ class ViewProjectHandler(webapp.RequestHandler):
     def get(self, url):
         url = url.strip().strip("/")
         project = Project(url=url)
-        link = Link(group="project_%s" % project.url)
-        links = link.get_group()
         try:
             project.get()
         except ProjectNotFoundException:
@@ -44,13 +43,25 @@ class ViewProjectHandler(webapp.RequestHandler):
                     <a href="%s" title="%s">%s</a>
                 </li>
                 """ % (link.url, link.title, link.name)
+            review = Review(project=project.datastore.key())
+            reviews = review.get_for_project()
+            reviews_string = ""
+            if len(reviews) > 0:
+                reviews_string += "<h2><a href=\"/projects/%s/reviews\" style=\"color: #555;\" title=\"View All Reviews\">Reviews</a></h2>\n" % project.url
+            for review in reviews:
+                byline = ""
+                if review.author:
+                    byline = review.author
+                if review.publication and review.author:
+                    byline = "%s of %s" % (review.author, review.publication)
+                if review.reference:
+                    byline = "<a href=\"%s\" title=\"View Source\">%s</a>" % (review.reference, byline)
+                reviews_string += """<p>"%s"<br />
+                <em class="reviewer">- %s</em><br />
+                <a href="/projects/%s/reviews/%s" title="See the full review.">See the full review</a>
+                </p>""" % (review.excerpt, byline, project.url, review.url)
             sidebar = """%s
-            <h2>Reviews</h2>
-            <p>"Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed
-                diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam
-                erat vot lutpat."<br />
-                <em class="reviewer">- Person's Name</em>
-            </p>""" % links_string
+            %s""" % (links_string, reviews_string)
             services = ""
             if project.services is not None and project.services != []:
                 services += "<ul>"

@@ -10,6 +10,7 @@ import sys, os, logging
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 
 from models.image import Image
+from models.person import Person
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
@@ -47,10 +48,13 @@ class AddEditImageHandler(webapp.RequestHandler):
         accessible at http://www.secondbit.org/images/logo.
         </p>"""
         title = "%s Image%s" % (action, name)
+        person = Person()
+        people = person.get_featured()
         template_values = {
             'title' : title,
             'content' : content,
-            'sidebar' : sidebar
+            'sidebar' : sidebar,
+            'people' : people
         }
         path = os.path.join(os.path.dirname(__file__), "../../template/hauk", "secondary.html")
         self.response.out.write(template.render(path, template_values))

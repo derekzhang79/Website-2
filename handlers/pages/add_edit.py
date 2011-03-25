@@ -11,6 +11,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 
 from models.page import Page
 from errors.page import PageNotFoundException
+from models.person import Person
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
@@ -71,10 +72,13 @@ class AddEditPageHandler(webapp.RequestHandler):
             plugging in the desired section title and text.</i>
         </p>"""
         title = "%s Page%s" % (action, name)
+        person = Person()
+        people = person.get_featured()
         template_values = {
             'content' : content,
             'title' : title,
-            'sidebar' : sidebar
+            'sidebar' : sidebar,
+            'people': people
         }
         path = os.path.join(os.path.dirname(__file__), '../../template/hauk', 'secondary.html')
         self.response.out.write(template.render(path, template_values))

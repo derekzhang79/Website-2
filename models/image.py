@@ -142,53 +142,68 @@ class Image():
 
         return ImageData.all().order("-uploaded_on").fetch(1000)
 
-    def rescale(self, width, height, halign='left', valign='top', crop=True):
-      """Resize then optionally crop a given image. Pulled straight from
-      StackOverflow, needs some editing.
+    def rescale(self, width=None, height=None, halign='left', valign='top', crop=True):
+        """Resize then optionally crop a given image. Pulled straight from
+        StackOverflow, needs some editing.
 
-      Attributes:
-        width: The desired width
-        height: The desired height
-        halign: Acts like photoshop's 'Canvas Size' function, horizontally
-                aligning the crop to left, middle or right
-        valign: Verticallly aligns the crop to top, middle or bottom
-        crop: Whether the image should be cropped or just resized
+        Attributes:
+            width: The desired width
+            height: The desired height
+            halign: Acts like photoshop's 'Canvas Size' function, horizontally
+                    aligning the crop to left, middle or right
+            valign: Verticallly aligns the crop to top, middle or bottom
+            crop: Whether the image should be cropped or just resized
     
-      """
-      image = images.Image(self.image)
+        """
+        image = images.Image(self.image)
 
-      desired_wh_ratio = float(width) / float(height)
-      wh_ratio = float(image.width) / float(image.height)
+        if width is None:
+            desired_wh_ratio = 0
+            wh_ratio = 1
+        elif height is None:
+            desired_wh_ratio = 1
+            wh_ratio = 0
+        elif width is None and height is None:
+            return self.datastore
+        else:
+            desired_wh_ratio = float(width) / float(height)
+            wh_ratio = float(image.width) / float(image.height)
 
-      if desired_wh_ratio > wh_ratio:
-        # resize to width, then crop to height
-        image.resize(width=width)
-        image.execute_transforms()
+        if desired_wh_ratio > wh_ratio:
+            # resize to width, then crop to height
+            image.resize(width=width)
+            image.execute_transforms()
+            if crop:
+                trim_y = (float(image.height - height) / 2) / image.height
+                if valign == 'top':
+                    image.crop(0.0, 0.0, 1.0, 1 - (2 * trim_y))
+                elif valign == 'bottom':
+                    image.crop(0.0, (2 * trim_y), 1.0, 1.0)
+                else:
+                    image.crop(0.0, trim_y, 1.0, 1 - trim_y)
+        else:
+            # resize to height, then crop to width
+            image.resize(height=height)
+            image.execute_transforms()
+            if crop:
+                trim_x = (float(image.width - width) / 2) / image.width
+                if halign == 'left':
+                    image.crop(0.0, 0.0, 1 - (2 * trim_x), 1.0)
+                elif halign == 'right':
+                    image.crop((2 * trim_x), 0.0, 1.0, 1.0)
+                else:
+                    image.crop(trim_x, 0.0, 1 - trim_x, 1.0)
         if crop:
-            trim_y = (float(image.height - height) / 2) / image.height
-            if valign == 'top':
-                image.crop(0.0, 0.0, 1.0, 1 - (2 * trim_y))
-            elif valign == 'bottom':
-                image.crop(0.0, (2 * trim_y), 1.0, 1.0)
-            else:
-                image.crop(0.0, trim_y, 1.0, 1 - trim_y)
-      else:
-        # resize to height, then crop to width
-        image.resize(height=height)
-        image.execute_transforms()
-        if crop:
-            trim_x = (float(image.width - width) / 2) / image.width
-            if halign == 'left':
-                image.crop(0.0, 0.0, 1 - (2 * trim_x), 1.0)
-            elif halign == 'right':
-                image.crop((2 * trim_x), 0.0, 1.0, 1.0)
-            else:
-                image.crop(trim_x, 0.0, 1 - trim_x, 1.0)
-    
-      self.image = image.execute_transforms()
-      self.height = image.height
-      self.width = image.width
-      self.shortname = "%s-%sx%s" % (self.shortname, image.width, image.height)
-      self.datastore = ImageData(mimetype=self.mimetype)
-      self.save()
-      return self.datastore
+            image = image.execute_transforms()
+        if type(image) != type("str"):
+            self.image = image._image_data
+        else:
+            image = images.Image(image)
+            self.image = image._image_data
+        self.height = image.height
+        self.width = image.width
+        self.shortname = "%s-%sx%s" % (self.shortname, image.width, image.height)
+        self.original = self.datastore
+        self.datastore = ImageData(mimetype=self.mimetype)
+        self.save()
+        return self.datastore

@@ -102,8 +102,11 @@ class Person():
                     raise PersonURLTakenException, self.url
             elif not self.url:
                 raise PersonNotInstantiatedException
-            self.datastore.avatar = db.Key(self.avatar)
-            self.datastore.avatar_thumb = Image(datastore=self.datastore.avatar).rescale(width=34, height=34, crop=True)
+            avatar = Image(datastore=db.get(db.Key(self.avatar)))
+            if avatar.width != 150:
+                self.datastore.avatar = avatar.rescale(width=150, crop=False)
+            if self.datastore.avatar_thumb is None or self.datastore.avatar_thumb.original is None or avatar.datastore.key() != self.datastore.avatar_thumb.original.key():
+                self.datastore.avatar_thumb = Image(datastore=self.datastore.avatar).rescale(width=34, height=34, crop=True)
             self.datastore.featured = self.featured
             self.datastore.role = self.role
             self.datastore.url = self.url
@@ -142,7 +145,7 @@ class Person():
     def get_list(self):
         """Returns a Query object for up to 1,000 PersonData objects."""
 
-        return PersonData.all().order("-date_joined").fetch(1000)
+        return PersonData.all().order("date_joined").fetch(1000)
 
     def get_featured(self):
         """Returns a Query object for up to 1,000 ReviewData objects that share

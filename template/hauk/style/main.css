@@ -86,6 +86,11 @@ a:hover {
 	width: 510px;
 	}
 
+.thirds-left {
+	float: left;
+	clear: both;
+}
+
 .thirds-middle { margin-left: 30px; margin-right: 30px; }
 
 .clear { clear: both; }
@@ -218,7 +223,7 @@ a:hover {
 	background: #f3f3f3;
 	padding: 50px 0;
 	text-shadow: 1px 1px #fff;
-	}
+}
 
 #main-content-inner { overflow: hidden; }
 
@@ -226,7 +231,7 @@ a:hover {
 	font-size: 18px;
 	font-weight: normal;
 	padding: 30px 0 5px;
-	}
+}
 
 #services li { margin-top: 30px; }
 
@@ -234,7 +239,12 @@ a:hover {
 	font-size: 16px;
 	font-weight: normal;
 	padding: 0 0 10px 40px;
-	}
+}
+
+
+#services li h3 a {
+	color: #666;
+}
 
 #services li p { padding-left: 40px; }
 
