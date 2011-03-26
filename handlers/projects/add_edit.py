@@ -13,6 +13,7 @@ from models.project import Project
 from models.link import Link
 from models.image import Image
 from models.service import Service
+from models.person import Person
 from errors.project import *
 from errors.image import *
 from google.appengine.ext import webapp, db
@@ -163,10 +164,16 @@ class AddEditProjectHandler(webapp.RequestHandler):
             license?
         </p>"""
         title = "%s Project%s" % (action, name)
+        link = Link(group="special_menu")
+        menu = link.get_group()
+        person = Person()
+        people = person.get_featured()
         template_values = {
             'content' : content,
             'title' : title,
-            'sidebar' : sidebar
+            'sidebar' : sidebar,
+            'people' : people,
+            'menu' : menu
         }
         path = os.path.join(os.path.dirname(__file__), '../../template/hauk', 'secondary.html')
         self.response.out.write(template.render(path, template_values))

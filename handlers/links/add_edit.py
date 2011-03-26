@@ -60,11 +60,14 @@ class AddEditLinkHandler(webapp.RequestHandler):
             </p>"""
         person = Person()
         people = person.get_featured()
+        link = Link(group="special_menu")
+        menu = link.get_group()
         template_values = {
             'content' : '<h2>%s Link%s</h2><div>%s</div>' % (action, name, content),
             'title' : '%s Link%s' % (action, name),
             'sidebar': sidebar,
-            'people' : people
+            'people' : people,
+            'menu' : menu
         }
         path = os.path.join(os.path.dirname(__file__), "../../template/hauk", 'secondary.html')
         self.response.out.write(template.render(path, template_values))

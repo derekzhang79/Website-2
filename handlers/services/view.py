@@ -10,6 +10,8 @@ import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 
 from models.service import *
+from models.person import Person
+from models.link import Link
 from errors.service import *
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
@@ -47,14 +49,21 @@ class ViewServiceHandler(webapp.RequestHandler):
             else:
                 sidebar = """<h2>Be The First</h2>
                 <p>We don't have any projects (that we can talk about, at least)
-                that have used this service. Be the first kid on your block to
+                that have used this service. <a href="/contact" title="Contact Us">Be the first</a> kid on your block to
                 get that bragging right!"""
             title = "Services: %s" % service.title
+            person = Person()
+            people = person.get_featured()
+            link = Link(group="special_menu")
+            menu = link.get_group()
             template_values = {
                 'header' : header,
                 'content' : content,
                 'title' : title,
-                'sidebar' : sidebar
+                'sidebar' : sidebar,
+                'people' : people,
+                'menu' : menu,
+                'subheader_title' : "Here's what we do."
             }
             path = os.path.join(os.path.dirname(__file__), '../../template/hauk', 'secondary.html')
             self.response.out.write(template.render(path, template_values))

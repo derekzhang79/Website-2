@@ -10,6 +10,7 @@ import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 
 from models.person import Person
+from models.link import Link
 from errors.person import PersonNotFoundException
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
@@ -35,12 +36,15 @@ class ViewPersonHandler(webapp.RequestHandler):
             content = """<h2>Meet %s</h2>
             <img src="/image/%s" style="float: left; padding-right: 10px;
             padding-bottom: 10px;" />%s""" % (person.name, person.avatar.shortname, person.description)
-
+            link = Link(group="special_menu")
+            menu = link.get_group()
             template_values = {
                 'content' : content,
                 'title' : "Team: %s" % person.name,
+                'subheader_title' : "Introducing %s" % person.name,
                 'sidebar' : sidebar,
-                'people' : person.get_featured()
+                'people' : person.get_featured(),
+                'menu' : menu
             }
             path = os.path.join(os.path.dirname(__file__), '../../template/hauk', 'secondary.html')
             self.response.out.write(template.render(path, template_values))

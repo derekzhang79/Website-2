@@ -13,6 +13,8 @@ from models.image import Image
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 
+from datetime import datetime, timedelta
+
 from errors.image import ImageNotFoundException
 
 class ProjectImageHandler(webapp.RequestHandler):
@@ -21,6 +23,7 @@ class ProjectImageHandler(webapp.RequestHandler):
         image = Image(shortname=shortname)
         image.get()
         self.response.headers['Content-Type'] = image.mimetype
+        self.response.headers['Expires'] = (datetime.today() + timedelta(days=7)).strftime("%a, %d %b %Y %Z")
         self.response.out.write(image.image)
 
 class ProjectThumbHandler(webapp.RequestHandler):
@@ -48,6 +51,7 @@ class ProjectThumbHandler(webapp.RequestHandler):
                 image.rescale(height=height, width=166, crop=True)
             thumb = image
         self.response.headers['Content-Type'] = thumb.mimetype
+        self.response.headers['Expires'] = (datetime.today() + timedelta(days=7)).strftime("%a, %d %b %Y %Z")
         self.response.out.write(thumb.image)
 
 application = webapp.WSGIApplication([

@@ -12,6 +12,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 from datastore import PageData
 from errors.page import *
 
+from google.appengine.api import memcache
+
 reserved_urls = ['projects', 'project', 'products', 'product', 'team', 'image', 'images', 'style', 'js', 'portfolio', 'admin', 'reviews', 'review', 'services', 'service', 'file']
 
 class Page():
@@ -97,6 +99,8 @@ class Page():
             self.datastore.sidebar = self.sidebar
             self.datastore.is_public = self.is_public
             self.datastore.put()
+            memcache.set("models/page/%s" % self.datastore.url, self.datastore)
+            memcache.delete("models/pages/list")
 
     def get(self):
         """Populates the current instance of Page with the data from
@@ -107,7 +111,11 @@ class Page():
         if self.url is None:
             raise PageNotInstantiatedException
         else:
-            datastore = PageData.all().filter("url =", self.url).get()
+            datastore = memcache.get("models/page/%s" % self.url)
+            if datastore is None:
+                datastore = PageData.all().filter("url =", self.url).get()
+                if datastore is not None:
+                    memcache.set("models/page/%s" % self.url, datastore)
             if datastore is None:
                 raise PageNotFoundException, self.url
             else:
@@ -122,8 +130,11 @@ class Page():
 
     def get_list(self):
         """Returns a Query object for up to 1,000 PageData objects."""
-
-        return PageData.all().order("-modified_on").fetch(1000)
+        pages = memcache.get("models/pages/list")
+        if pages is None:
+            pages = PageData.all().order("-modified_on").fetch(1000)
+            memcache.set("models/pages/list", pages)
+        return pages
 
     def delete(self):
         """Removes self.datastore from the datastore. Throws a
@@ -132,6 +143,8 @@ class Page():
         if self.datastore is None:
             raise PageNotInstantiatedException
         else:
+            memcache.delete("models/page/%s" % self.datastore.url)
+            memcache.delete("models/pages/list")
             self.datastore.delete()
             self.datastore = None
             self.title = None

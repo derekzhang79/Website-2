@@ -12,6 +12,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 from models.service import *
 from errors.service import *
 from models.person import Person
+from models.link import Link
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
@@ -40,12 +41,16 @@ class ViewServicesHandler(webapp.RequestHandler):
         title = "Services"
         person = Person()
         people = person.get_featured()
+        link = Link(group="special_menu")
+        menu = link.get_group()
         template_values = {
             'header' : header,
             'content' : content,
             'title' : title,
             'sidebar' : sidebar,
-            'people' : people
+            'people' : people,
+            'menu' : menu,
+            'subheader_title' : "Here's what we do."
         }
         path = os.path.join(os.path.dirname(__file__), '../../template/hauk', 'secondary.html')
         self.response.out.write(template.render(path, template_values))

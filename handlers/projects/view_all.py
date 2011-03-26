@@ -47,9 +47,9 @@ class ViewProjectsHandler(webapp.RequestHandler):
                 images_string += """<a href="/projects/%s/image/%s.png" class="fancybox">
                     <img src="/projects/%s/thumb/%s.png" class="portfolio-thumb%s" width="166" />
                 </a>""" % (project.url, image.shortname, project.url, image.shortname, middle_class)
-            content += """<h2>%s</h2>
+            content += """<h2><a href="/projects/%s" title="View %s">%s</a></h2>
             %s
-            %s""" % (project.name, images_string, project.excerpt)
+            %s""" % (project.url, project.name, project.name, images_string, project.excerpt)
         sidebar = """<h2>Your Project Here</h2>
         <p>We're looking to do cool stuff all the time. If you have a project or
         an idea but need some help on the tech end, <a href="/contact"
@@ -62,13 +62,16 @@ class ViewProjectsHandler(webapp.RequestHandler):
         contributions for on <a href="http://www.github.com/secondbit"
         title="Second Bit on Github">our Github page</a>, so fork us and send us
         a pull request.</p>"""
+        link = Link(group="special_menu")
+        menu = link.get_group()
         template_values = {
             'subheader_title' : "Check out some of our work.",
             'title' : "Projects",
             'header': header,
             'content' : content,
             'sidebar' : sidebar,
-            'people' : people
+            'people' : people,
+            'menu' : menu
         }
         path = os.path.join(os.path.dirname(__file__), '../../template/hauk', 'secondary.html')
         self.response.out.write(template.render(path, template_values))

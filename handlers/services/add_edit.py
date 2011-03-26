@@ -12,6 +12,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 from models.service import Service
 from models.project import Project
 from models.image import Image
+from models.person import Person
+from models.link import Link
 from errors.service import *
 from google.appengine.ext import webapp, db
 from google.appengine.ext.webapp import template
@@ -66,6 +68,10 @@ class AddEditServiceHandler(webapp.RequestHandler):
                     selected = " selected=\"selected\""
                 projects_string += "\n<option value=\"%s\"%s>%s</option>" % (projectkey, selected, project.name)
             projects_string += "</select><br />"
+        person = Person()
+        people = person.get_featured()
+        link = Link(group="special_menu")
+        menu = link.get_group()
         content = """<h2>%s Service%s</h2>
             <p>
                 <form method="post">
@@ -111,7 +117,9 @@ class AddEditServiceHandler(webapp.RequestHandler):
         template_values = {
             'content' : content,
             'title' : title,
-            'sidebar' : sidebar
+            'sidebar' : sidebar,
+            'people': people,
+            'menu' : menu
         }
         path = os.path.join(os.path.dirname(__file__), '../../template/hauk', 'secondary.html')
         self.response.out.write(template.render(path, template_values))

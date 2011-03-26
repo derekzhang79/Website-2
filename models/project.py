@@ -12,6 +12,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 from datastore import ProjectData
 from models.project_service import *
 from errors.project import *
+from google.appengine.api import memcache
+
 class Project():
     """Defines datastore interactions for projects on the site."""
 
@@ -129,6 +131,10 @@ class Project():
         self.datastore.open_source = self.open_source
         self.datastore.featured_link = self.featured_link
         self.datastore.put()
+        memcache.set("models/project/%s" % self.url, self.datastore)
+        memcache.delete("models/projects/list")
+        memcache.delete("models/projects/featured")
+        memcache.delete("models/projects/%s/services" % self.url)
 
     def get(self):
         """Populates the current instance of Project with the data from
@@ -139,7 +145,11 @@ class Project():
         if self.url is None:
             raise ProjectNotInstantiatedException
         else:
-            datastore = ProjectData.all().filter("url =", self.url).get()
+            datastore = memcache.get("models/projects/%s" % self.url)
+            if datastore is None:
+                datastore = ProjectData.all().filter("url =", self.url).get()
+                if datastore is not None:
+                    memcache.set("models/projects/%s" % self.url, datastore)
             if datastore is None:
                 raise ProjectNotFoundException, self.url
             else:
@@ -162,14 +172,20 @@ class Project():
 
     def get_list(self):
         """Returns a Query object for up to 1,000 ProjectData objects."""
-
-        return ProjectData.all().fetch(1000)
+        projects = memcache.get("models/projects/list")
+        if projects is None:
+            projects = ProjectData.all().fetch(1000)
+            memcache.set("models/projects/list", projects)
+        return projects
 
     def get_featured(self):
         """Returns a Query object for up to 1,000 ProjectData objects. Will only
         return ProjectData objects that have featured set to True."""
-        
-        return ProjectData.all().filter("featured =", True).fetch(1000)
+        projects = memcache.get("models/projects/featured")
+        if projects is None:
+            projects = ProjectData.all().filter("featured =", True).fetch(1000)
+            memcache.set("models/projects/featured", projects)
+        return projects
 
     def delete(self):
         """Removes self.datastore from the datastore. Throws a
@@ -178,6 +194,10 @@ class Project():
         if self.datastore is None:
             raise ProjectNotInstantiatedException
         else:
+            memcache.delete("models/projects/list")
+            memcache.delete("models/projects/featured")
+            memcache.delete("models/projects/%s" % self.datastore.url)
+            memcache.delete("models/projects/%s/services" % self.datastore.url)
             self.datastore.delete()
             self.datastore = None
             self.url = None
@@ -205,11 +225,14 @@ class Project():
         if self.datastore is None:
             raise ProjectNotInstantiatedException
         else:
-            rel = ProjectService(project=self.datastore)
-            rel_data = rel.get_all_matching()
-            services = []
-            for relationship in rel_data:
-                services.append(ProjectService(datastore=relationship))
+            services = memcache.get("models/projects/%s/services" % self.datastore.url)
+            if services is None:
+                rel = ProjectService(project=self.datastore)
+                rel_data = rel.get_all_matching()
+                services = []
+                for relationship in rel_data:
+                    services.append(ProjectService(datastore=relationship))
+                memcache.set("models/projects/%s/services" % self.datastore.url, services)
             self.services = services
 
     def add_service(self, service, content=None):
@@ -223,6 +246,7 @@ class Project():
         else:
             relationship = ProjectService(project=self.datastore, service=service, content = content)
             relationship.save()
+            memcache.delete("models/projects/%s/services" % self.datastore.url)
 
     def remove_service(self, service):
         """Removes a ProjectServiceData object from the datastore. Accepts a
@@ -240,4 +264,5 @@ class Project():
             else:
                 for relationship in rel_data:
                     relationship.delete()
+            memcache.delete("models/projects/%s/services" % self.datastore.url)
             self.get_services()

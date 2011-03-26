@@ -13,6 +13,8 @@ from datetime import datetime
 
 from models.review import Review
 from models.project import Project
+from models.person import Person
+from models.link import Link
 from errors.review import *
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
@@ -89,10 +91,16 @@ class AddEditReviewHandler(webapp.RequestHandler):
                 <b>Group:</b> The 'group' the link is part of. Could be
                     'special_menu' or 'project_android2cloud'.
             </p>"""
+        link = Link(group="special_menu")
+        menu = link.get_group()
+        person = Person()
+        people = person.get_featured()
         template_values = {
             'content' : content,
             'title' : '%s Review%s' % (action, name),
-            'sidebar': sidebar
+            'sidebar': sidebar,
+            'menu': menu,
+            'people': people
         }
         path = os.path.join(os.path.dirname(__file__), "../../template/hauk", 'secondary.html')
         self.response.out.write(template.render(path, template_values))

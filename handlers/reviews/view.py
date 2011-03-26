@@ -10,6 +10,8 @@ import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 
 from models.review import Review
+from models.person import Person
+from models.link import Link
 from errors.review import ReviewNotFoundException
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
@@ -31,10 +33,17 @@ class ViewReviewHandler(webapp.RequestHandler):
             reviews = review.get_for_project()
             for other_review in reviews:
                 sidebar += "\n\t\t<li><a href=\"/projects/%s/reviews/%s\" title=\"Review of %s from %s\">%s</a></li>" % (other_review.project.url, other_review.url, other_review.project.name, other_review.publication, other_review.publication)
+            link = Link(group="special_menu")
+            menu = link.get_group()
+            person = Person()
+            people = person.get_featured()
             template_values = {
                 'content' : "%s%s" % (content, review.content),
-                'title' : "Look at the nice things people are saying",
-                'sidebar' : sidebar
+                'subheader_title' : "Look at the nice things people are saying",
+                'sidebar' : sidebar,
+                'menu' : menu,
+                'people' : people,
+                'title' : 'Review of %s from %s' % (review.publication, review.project.name)
             }
             path = os.path.join(os.path.dirname(__file__), '../../template/hauk', 'secondary.html')
             self.response.out.write(template.render(path, template_values))

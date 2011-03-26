@@ -10,6 +10,7 @@ import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 
 from google.appengine.ext import db
+from google.appengine.api import memcache
 from datastore import PersonData
 from errors.person import *
 from models.image import Image
@@ -116,6 +117,9 @@ class Person():
             self.datastore.email = self.email
             self.datastore.homepage = self.homepage
             self.datastore.put()
+            memcache.set("models/person/%s" % self.datastore.url, self.datastore)
+            memcache.delete("models/people/list")
+            memcache.delete("models/people/featured")
 
     def get(self):
         """Populates the current instance of Page with the data from
@@ -126,7 +130,11 @@ class Person():
         if self.url is None:
             raise PersonNotInstantiatedException
         else:
-            datastore = PersonData.all().filter("url =", self.url).get()
+            datastore = memcache.get("models/person/%s" % self.url)
+            if datastore is None:
+                datastore = PersonData.all().filter("url =", self.url).get()
+                if datastore is not None:
+                    memcache.set("models/person/%s" % self.url, datastore)
             if datastore is None:
                 raise PersonNotFoundException, self.url
             else:
@@ -144,14 +152,20 @@ class Person():
 
     def get_list(self):
         """Returns a Query object for up to 1,000 PersonData objects."""
-
-        return PersonData.all().order("date_joined").fetch(1000)
+        people = memcache.get("models/people/list")
+        if people is None:
+            people = PersonData.all().order("date_joined").fetch(1000)
+            memcache.set("models/people/list", people)
+        return people
 
     def get_featured(self):
         """Returns a Query object for up to 1,000 ReviewData objects that share
         a ProjectData value with self.project."""
-        
-        return PersonData.all().filter("featured =", True).order("date_joined").fetch(1000)
+        people = memcache.get("models/people/featured")
+        if people is None:
+            people = PersonData.all().filter("featured =", True).order("date_joined").fetch(1000)
+            memcache.set("models/people/featured", people)
+        return people
 
     def delete(self):
         """Removes self.datastore from the datastore. Throws a
@@ -160,6 +174,9 @@ class Person():
         if self.datastore is None:
             raise ReviewNotInstantiatedException
         else:
+            memcache.delete("models/person/%s" % self.datastore.url)
+            memcache.delete("models/people/list")
+            memcache.delete("models/people/featured")
             self.datastore.delete()
             self.datastore = None
             self.avatar = None

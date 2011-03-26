@@ -14,6 +14,8 @@ from models.service import Service
 from google.appengine.ext import webapp, db
 from google.appengine.ext.webapp.util import run_wsgi_app
 
+from datetime import datetime, timedelta
+
 from errors.image import ImageNotFoundException
 
 class ServiceIconHandler(webapp.RequestHandler):
@@ -33,6 +35,7 @@ class ServiceIconHandler(webapp.RequestHandler):
                 self.response.out.write("Error, image not found.")
             else:
                 self.response.headers['Content-Type'] = image.mimetype
+                self.response.headers['Expires'] = (datetime.today() + timedelta(days=7)).strftime("%a, %d %b %Y %Z")
                 self.response.out.write(image.image)
 
 application = webapp.WSGIApplication([

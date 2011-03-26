@@ -10,6 +10,7 @@ import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 
 from google.appengine.ext import db
+from google.appengine.api import memcache
 from datastore import ReviewData
 from errors.review import *
 
@@ -118,6 +119,9 @@ class Review():
             self.datastore.date = self.date
             self.datastore.featured = self.featured
             self.datastore.put()
+            memcache.set("models/review/%s" % self.datastore.url, self.datastore)
+            memcache.delete("models/reviews/list")
+            memcache.delete("models/reviews/projects/%s" % self.project)
 
     def get(self):
         """Populates the current instance of Page with the data from
@@ -128,7 +132,11 @@ class Review():
         if self.url is None:
             raise ReviewNotInstantiatedException
         else:
-            datastore = ReviewData.all().filter("url =", self.url).get()
+            datastore = memcache.get("models/review/%s" % self.url)
+            if datastore is None:
+                datastore = ReviewData.all().filter("url =", self.url).get()
+                if datastore is not None:
+                    memcache.set("models/review/%s" % self.url, datastore)
             if datastore is None:
                 raise ReviewNotFoundException, self.url
             else:
@@ -147,8 +155,11 @@ class Review():
 
     def get_list(self):
         """Returns a Query object for up to 1,000 PageData objects."""
-
-        return ReviewData.all().order("-modified_on").fetch(1000)
+        reviews = memcache.get("models/reviews/list")
+        if reviews is None:
+            reviews = ReviewData.all().order("-modified_on").fetch(1000)
+            memcache.set("models/reviews/list", reviews)
+        return reviews
 
     def get_for_project(self):
         """Returns a Query object for up to 1,000 ReviewData objects that share
@@ -156,7 +167,11 @@ class Review():
         
         if self.project is None:
             raise ReviewNotInstantiatedException
-        return ReviewData.all().filter("project =", self.project).order("-date").fetch(1000)
+        reviews = memcache.get("models/reviews/projects/%s" % self.project)
+        if reviews is None:
+            reviews = ReviewData.all().filter("project =", self.project).order("-date").fetch(1000)
+            memcache.set("models/reviews/projects/%s" % self.project, reviews)
+        return reviews
 
     def delete(self):
         """Removes self.datastore from the datastore. Throws a
@@ -165,6 +180,9 @@ class Review():
         if self.datastore is None:
             raise ReviewNotInstantiatedException
         else:
+            memcache.delete("models/review/%s" % self.datastore.url)
+            memcache.delete("models/reviews/list")
+            memcache.delete("models/reviews/projects/%s" % self.datastore.project)
             self.datastore.delete()
             self.datastore = None
             self.author = None

@@ -12,6 +12,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 from models.project import Project
 from errors.project import ProjectNotFoundException
 from models.link import Link
+from models.person import Person
 from models.review import Review
 from google.appengine.ext import webapp, db
 from google.appengine.ext.webapp import template
@@ -89,12 +90,18 @@ class ViewProjectHandler(webapp.RequestHandler):
             content = """<h2>%s</h2>
             %s
             %s""" % (project.name, images_string, project.description)
+            person = Person()
+            people = person.get_featured()
+            link = Link(group="special_menu")
+            menu = link.get_group()
             template_values = {
                 'subheader_title' : "Check out some of our work.",
                 'title' : project.name,
                 'header': header,
                 'content' : content,
-                'sidebar' : sidebar
+                'sidebar' : sidebar,
+                'menu' : menu,
+                'people' : people
             }
             path = os.path.join(os.path.dirname(__file__), '../../template/hauk', 'secondary.html')
             self.response.out.write(template.render(path, template_values))

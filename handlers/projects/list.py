@@ -10,6 +10,8 @@ import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 
 from models.project import Project
+from models.link import Link
+from models.person import Person
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
@@ -51,10 +53,16 @@ class ListProjectsHandler(webapp.RequestHandler):
         <p>You can edit and delete the projects in the datastore by clicking the
         appropriate link. You can also <a href="/admin/projects/add" title="Add a
         project">add a project</a> to the datastore.</p>"""
+        person = Person()
+        people = person.get_featured()
+        link = Link(group="special_menu")
+        menu = link.get_group()
         template_values = {
             'content' : content,
             'sidebar' : sidebar,
-            'title' : "Projects"
+            'title' : "Projects",
+            'menu' : menu,
+            'people' : people
         }
         path = os.path.join(os.path.dirname(__file__), "../../template/hauk", "secondary.html")
         self.response.out.write(template.render(path, template_values))

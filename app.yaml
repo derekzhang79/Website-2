@@ -3,6 +3,17 @@ version: 1
 runtime: python
 api_version: 1
 
+skip_files: |
+ ^(.*/)?(
+ (app\.yaml)|
+ (app\.yml)|
+ (index\.yaml)|
+ (index\.yml)|
+ (#.*#)|
+ (.*~)|
+ (.*\.py[co])|
+ )$
+ 
 handlers:
 - url: /admin/images/(add|edit).*
   script: handlers/images/add_edit.py
@@ -112,6 +123,34 @@ handlers:
 - url: /404
   static_files: template/404.html
   upload: template/404.html
+
+- url: /remote_api
+  script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
+  login: admin
+
+- url: /_ah/queue/deferred
+  script: bloggart/deferred.py
+  login: admin
+
+- url: /admin/blog/.*
+  script: bloggart/admin.py
+  login: admin
+
+- url: /admin/blog
+  script: bloggart/admin.py
+  login: admin
+  
+- url: /static/([^/]+)/(.*)
+  static_files: bloggart/themes/\1/static/\2
+  upload: bloggart/themes/[^/]+/static/.*
+
+- url: /blog/.*
+  script: bloggart/static.py
+
+- url: /blog
+  script: bloggart/static.py
+
+
 - url: /
   script: main.py
 - url: /.*

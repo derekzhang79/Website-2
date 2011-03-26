@@ -13,6 +13,7 @@ from datetime import datetime
 
 from models.person import Person
 from models.image import Image
+from models.link import Link
 from errors.person import *
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
@@ -93,11 +94,14 @@ class AddEditPersonHandler(webapp.RequestHandler):
                     'special_menu' or 'project_android2cloud'.
             </p>"""
         people = person.get_featured()
+        link = Link(group="special_menu")
+        menu = link.get_group()
         template_values = {
             'content' : content,
             'title' : '%s %s' % (action, name),
             'sidebar': sidebar,
-            'people' : people
+            'people' : people,
+            'menu' : menu
         }
         path = os.path.join(os.path.dirname(__file__), "../../template/hauk", 'secondary.html')
         self.response.out.write(template.render(path, template_values))

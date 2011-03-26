@@ -10,7 +10,7 @@ import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 
 from datastore import ImageData
-from google.appengine.api import images, users
+from google.appengine.api import images, memcache
 from google.appengine.ext import db
 from errors.image import *
 import datetime
@@ -94,6 +94,8 @@ class Image():
         self.datastore.height = tmp_image.height
         self.datastore.width = tmp_image.width
         self.datastore.put()
+        memcache.set("models/image/%s" % self.shortname, self.datastore)
+        memcache.delete("models/images/list")
 
     def get(self):
         """Populates the current instance of Image with the data from
@@ -104,7 +106,11 @@ class Image():
         if self.shortname is None:
             raise ImageNotInstantiatedException
         else:
-            datastore = ImageData.all().filter("shortname =", self.shortname).get()
+            datastore = memcache.get("models/image/%s" % self.shortname)
+            if datastore is None:
+                datastore = ImageData.all().filter("shortname =", self.shortname).get()
+                if datastore is not None:
+                    memcache.set("models/image/%s" % self.shortname, datastore)
             if datastore is None:
                 raise ImageNotFoundException, self.shortname
             else:
@@ -139,8 +145,11 @@ class Image():
 
     def get_list(self):
         """Returns a Query object for up to 1,000 ImageData objects."""
-
-        return ImageData.all().order("-uploaded_on").fetch(1000)
+        images = memcache.get("models/images/list")
+        if images is None:
+           images = ImageData.all().order("-uploaded_on").fetch(1000)
+           memcache.set("models/images/list", images)
+        return images
 
     def rescale(self, width=None, height=None, halign='left', valign='top', crop=True):
         """Resize then optionally crop a given image. Pulled straight from

@@ -32,11 +32,9 @@
 				<h1 id="logo"><a href="/">Second Bit, LLC.</a></h1>
 
 				<ul id="main-nav">
-					<li><a href="/"><span>Home</span></a></li>
-					<li><a href="#"><span>About Us</span></a></li>
-					<li><a href="#"><span>The Team</span></a></li>
-					<li><a href="#"><span>Projects</span></a></li>
-					<li><a href="#"><span>Contact</span></a></li>
+					{% for link in menu %}
+					<li><a href="{{ link.url }}" title="{{ link.title }}"><span>{{ link.name }}</span></a></li>
+					{% endfor %}
 				</ul>
 			</div> <!-- #header-inner -->
 		</div> <!-- #header -->
@@ -71,7 +69,7 @@
 				<div class="twothirds">
 					<h4>A bit about us</h4>
 					<p class="about-footer">Second Bit, LLC was founded in the Fall of 2010 with the central guiding goal of "let's make cool stuff". Since then, we've released products that have reached thousands of people and been covered by publications from the niche to the well-known. We believe in open source, freely available software, and work hard to Do The Right Thing.<br />
-					<a href="#">Learn more</a>.</p>
+					<a href="/about">Learn more</a>.</p>
 				</div> <!-- .twothirds -->
 	
 				<div class="onethird">

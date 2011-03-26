@@ -13,11 +13,14 @@ from models.image import Image
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 
+from datetime import datetime, timedelta
+
 class ViewImageHandler(webapp.RequestHandler):
     def get(self, shortname):
         image = Image(shortname=shortname)
         image.get()
         self.response.headers['Content-Type'] = image.mimetype
+        self.response.headers['Expires'] = (datetime.today() + timedelta(days=7)).strftime("%a, %d %b %Y %Z")
         self.response.out.write(image.image)
 
 application = webapp.WSGIApplication([

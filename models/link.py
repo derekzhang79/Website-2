@@ -10,6 +10,7 @@ import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 
 from datastore import LinkData
+from google.appengine.api import memcache
 
 class Link():
     """Defines datastore interactions for links that appear throughout the
@@ -82,6 +83,9 @@ class Link():
             self.datastore.weight = int(self.weight)
             self.datastore.group = self.group
             self.datastore.put()
+            memcache.set("models/link/%s" % self.datastore.key(), self.datastore)
+            memcache.delete("models/links/group/%s" % self.datastore.group)
+            memcache.delete("models/links/list")
 
     def get(self):
         """Populates the current instance of Link with the data from
@@ -92,7 +96,11 @@ class Link():
         if self.key is None:
             raise LinkNotInstantiatedException
         else:
-            datastore = LinkData.get(self.key)
+            datastore = memcache.get("models/link/%s" % self.key)
+            if datastore is None:
+                datastore = LinkData.get(self.key)
+                if datastore is not None:
+                    memcache.set("models/link/%s" % self.key, datastore)
             if datastore is None:
                 raise LinkNotFoundException, self.key
             else:
@@ -112,6 +120,9 @@ class Link():
         if self.datastore is None:
             raise LinkNotInstantiatedException
         else:
+            memcache.delete("models/link/%s" % self.datastore.key())
+            memcache.delete("models/links/group/%s" % self.datastore.group)
+            memcache.delete("models/links/list")
             self.datastore.delete()
             self.datastore = None
             self.name = None
@@ -130,9 +141,16 @@ class Link():
         if self.group is None:
             raise LinkNotInstantiatedException
         else:
-            return LinkData.all().filter("group =", self.group).order("weight").fetch(1000)
+            links = memcache.get("models/links/group/%s" % self.group)
+            if links is None:
+                links = LinkData.all().filter("group =", self.group).order("weight").fetch(1000)
+                memcache.set("models/links/group/%s" % self.group, links)
+            return links
 
     def get_list(self):
         """Returns a Query object for up to 1,000 LinkData objects."""
-
-        return LinkData.all().order("group").order("weight").fetch(1000)
+        links = memcache.get("models/links/list")
+        if links is None:
+            links = LinkData.all().order("group").order("weight").fetch(1000)
+            memcache.set("models/links/list", links)
+        return links
